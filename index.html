@@ -15,6 +15,8 @@ h1 { font-size: 2rem; text-align: center; color: #ffa500; }
 .metric { font-weight: bold; }
 .metric span.label { color: #ffff00; }
 .metric span.value { color: #ffa500; font-size: 2rem; }
+.details { text-align: left; margin-top: 15px; }
+.details li { margin-bottom: 5px; }
 </style>
 </head>
 <body>
@@ -43,6 +45,19 @@ async function fetchRecentVideos(channelId) {
   return data.items.map(item => item.id.videoId);
 }
 
+async function fetchChannelInfo(channelId) {
+  const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${API_KEY}`);
+  const data = await res.json();
+  const ch = data.items[0];
+  return {
+    title: ch.snippet.title,
+    subscribers: ch.statistics.subscriberCount,
+    created: ch.snippet.publishedAt.split('T')[0],
+    totalVideos: ch.statistics.videoCount,
+    totalViews: ch.statistics.viewCount
+  };
+}
+
 async function analyzeSentiment(comments) {
   const doc = comments.join(". ");
   const res = await fetch(`https://language.googleapis.com/v1/documents:analyzeSentiment?key=${NLP_API_KEY}`, {
@@ -63,12 +78,15 @@ async function analyzeChannelComments() {
     return;
   }
   const channelId = channelIdMatch[1];
+  const channelInfo = await fetchChannelInfo(channelId);
   const videos = await fetchRecentVideos(channelId);
 
   let comments = [];
+  let analyzedVideos = 0;
   for (let videoId of videos) {
     if (comments.length >= 100) break;
     comments = await fetchComments(videoId, comments, 100 - comments.length);
+    analyzedVideos++;
   }
 
   if (comments.length === 0) {
@@ -81,7 +99,16 @@ async function analyzeChannelComments() {
   document.getElementById('result').innerHTML = `
     <div class="result-card">
       <div class="metric">
+        <span class="label">${channelInfo.title}</span><br/>
         <span class="label">Positive Comments Rate:</span> <span class="value">${positiveRate}%</span>
+        <ul class="details">
+          <li>구독자 수: ${parseInt(channelInfo.subscribers).toLocaleString()}</li>
+          <li>채널 개설일: ${channelInfo.created}</li>
+          <li>총 업로드 수: ${parseInt(channelInfo.totalVideos).toLocaleString()}</li>
+          <li>전체 조회 수: ${parseInt(channelInfo.totalViews).toLocaleString()}</li>
+          <li>분석 댓글 수: ${comments.length}</li>
+          <li>분석 대상 영상 수: ${analyzedVideos}</li>
+        </ul>
       </div>
     </div>
   `;
