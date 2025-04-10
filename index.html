@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>YouTube Comment Positive Rate Analyzer</title>
+<title>YouTube Channel Comment Positive Rate Analyzer</title>
 <style>
 body { background-color: #121212; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 0; }
 .container { padding: 20px; max-width: 800px; margin: auto; }
@@ -19,22 +19,28 @@ h1 { font-size: 2rem; text-align: center; color: #ffa500; }
 </head>
 <body>
 <div class="container">
-<h1>YouTube Comment Positive Rate Analyzer</h1>
+<h1>YouTube Channel Comment Positive Rate Analyzer</h1>
 <div class="input-area">
-<input type="text" id="videoUrl" placeholder="YouTube 영상 URL 입력" />
-<button onclick="analyzeComments()">Analyze Comments</button>
+<input type="text" id="channelUrl" placeholder="YouTube 채널 URL 입력" />
+<button onclick="analyzeChannelComments()">Analyze Comments</button>
 </div>
 <div id="result"></div>
 </div>
 
 <script>
-const API_KEY = "AIzaSyC0WkWnLxz99SKvE45FdVJYwiHCf96I7Kk";
-const NLP_API_KEY = "AIzaSyC0WkWnLxz99SKvE45FdVJYwiHCf96I7Kk";
+const API_KEY = "YOUR_YOUTUBE_API_KEY";
+const NLP_API_KEY = "YOUR_GOOGLE_NLP_API_KEY";
 
-async function fetchComments(videoId) {
-  const res = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&key=${API_KEY}`);
+async function fetchComments(videoId, collectedComments, maxComments) {
+  const res = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=${Math.min(maxComments,100)}&key=${API_KEY}`);
   const data = await res.json();
-  return data.items.map(item => item.snippet.topLevelComment.snippet.textOriginal);
+  return collectedComments.concat(data.items.map(item => item.snippet.topLevelComment.snippet.textOriginal));
+}
+
+async function fetchRecentVideos(channelId) {
+  const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${channelId}&part=id&type=video&order=date&maxResults=20`);
+  const data = await res.json();
+  return data.items.map(item => item.id.videoId);
 }
 
 async function analyzeSentiment(comments) {
@@ -49,15 +55,27 @@ async function analyzeSentiment(comments) {
   return ((positiveComments / sentimentData.sentences.length) * 100).toFixed(1);
 }
 
-async function analyzeComments() {
-  const url = document.getElementById('videoUrl').value;
-  const videoIdMatch = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11}).*/);
-  if (!videoIdMatch) {
-    alert('Invalid YouTube URL');
+async function analyzeChannelComments() {
+  const url = document.getElementById('channelUrl').value;
+  const channelIdMatch = url.match(/(?:channel\/|@)([\w-]+)/);
+  if (!channelIdMatch) {
+    alert('Invalid YouTube Channel URL');
     return;
   }
-  const videoId = videoIdMatch[1];
-  const comments = await fetchComments(videoId);
+  const channelId = channelIdMatch[1];
+  const videos = await fetchRecentVideos(channelId);
+
+  let comments = [];
+  for (let videoId of videos) {
+    if (comments.length >= 100) break;
+    comments = await fetchComments(videoId, comments, 100 - comments.length);
+  }
+
+  if (comments.length === 0) {
+    document.getElementById('result').innerHTML = '<div class="result-card"><div class="metric"><span class="label">No comments found.</span></div></div>';
+    return;
+  }
+
   const positiveRate = await analyzeSentiment(comments);
 
   document.getElementById('result').innerHTML = `
