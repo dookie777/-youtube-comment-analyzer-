@@ -28,8 +28,8 @@ h1 { font-size: 2rem; text-align: center; color: #ffa500; }
 </div>
 
 <script>
-const API_KEY = "YOUR_YOUTUBE_API_KEY";
-const NLP_API_KEY = "YOUR_GOOGLE_NLP_API_KEY";
+const API_KEY = "AIzaSyC0WkWnLxz99SKvE45FdVJYwiHCf96I7Kk";
+const NLP_API_KEY = "AIzaSyC0WkWnLxz99SKvE45FdVJYwiHCf96I7Kk";
 
 async function fetchComments(videoId) {
   const res = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&key=${API_KEY}`);
