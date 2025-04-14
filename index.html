@@ -33,8 +33,14 @@
     }
     .player-name {
       font-size: 2rem;
-      color: #FFA500;
+      color: #FFF;
+      font-weight: bold;
       margin: 20px 0;
+    }
+    .team-name {
+      font-size: 1.6rem;
+      color: #FFF;
+      margin-bottom: 15px;
     }
     .checkbox {
       font-size: 0.9rem;
@@ -70,7 +76,10 @@
     }
     .highlight {
       font-weight: bold;
-      color: #FFD700;
+      color: #FFF;
+    }
+    .sub-stat {
+      font-size: 0.9rem;
     }
   </style>
 </head>
@@ -79,7 +88,8 @@
   <input type="text" id="searchPlayer" placeholder="선수 이름 입력">
   <button onclick="showPlayerStats()">검색</button>
 
-  <div class="player-name" id="playerName">김선형 (서울 SK 나이츠)</div>
+  <div class="player-name" id="playerName">김선형</div>
+  <div class="team-name" id="teamName">서울 SK 나이츠</div>
 
   <div class="checkbox">
     <input type="checkbox" id="minGames" onchange="toggleRanking()">
@@ -101,12 +111,12 @@
       <table>
         <tr><td class="highlight">총 득점</td><td class="highlight">486점</td><td class="highlight">5위</td></tr>
         <tr><td class="highlight">평균 득점</td><td class="highlight">15.19점</td><td class="highlight">6위</td></tr>
-        <tr><td>평균 2P 시도</td><td>8.2개</td><td>8위</td></tr>
-        <tr><td>평균 2P 성공</td><td>4.3개</td><td>7위</td></tr>
-        <tr><td>평균 3P 시도</td><td>4.2개</td><td>10위</td></tr>
-        <tr><td>평균 3P 성공</td><td>1.7개</td><td>9위</td></tr>
-        <tr><td>평균 FT 시도</td><td>2.8개</td><td>4위</td></tr>
-        <tr><td>평균 FT 성공</td><td>2.4개</td><td>공동 4위</td></tr>
+        <tr class="sub-stat"><td>평균 2P 시도</td><td>8.2개</td><td>8위</td></tr>
+        <tr class="sub-stat"><td>평균 2P 성공</td><td>4.3개</td><td>7위</td></tr>
+        <tr class="sub-stat"><td>평균 3P 시도</td><td>4.2개</td><td>10위</td></tr>
+        <tr class="sub-stat"><td>평균 3P 성공</td><td>1.7개</td><td>9위</td></tr>
+        <tr class="sub-stat"><td>평균 FT 시도</td><td>2.8개</td><td>4위</td></tr>
+        <tr class="sub-stat"><td>평균 FT 성공</td><td>2.4개</td><td>공동 4위</td></tr>
       </table>
     </div>
 
@@ -125,7 +135,7 @@
 <script>
   function showPlayerStats() {
     let player = document.getElementById('searchPlayer').value;
-    document.getElementById('playerName').innerText = player + " (팀 이름)";
+    document.getElementById('playerName').innerText = player;
   }
 
   function toggleRanking() {
