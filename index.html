@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>KBL 선수 개인 통계 분석</title>
+  <title>Basketball Stats Analyzer</title>
   <style>
     body {
       background: #121212;
@@ -17,6 +17,20 @@
       padding: 20px;
       box-sizing: border-box;
       text-align: center;
+    }
+    .tabs button {
+      background: #282828;
+      color: #FFF;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin: 0 5px;
+      font-weight: bold;
+      width: 160px;
+    }
+    .tabs button.active {
+      background: #E0E0E0;
+      color: #000;
     }
     input, button {
       padding: 8px 15px;
@@ -85,6 +99,13 @@
 </head>
 <body>
 <div class="container">
+  <h2>Basketball Stats Analyzer</h2>
+  <div class="tabs">
+    <button class="active">전체 선수 통계</button>
+    <button>선수 개인 검색</button>
+    <button>선수 비교</button>
+  </div>
+
   <input type="text" id="searchPlayer" placeholder="선수 이름 입력">
   <button onclick="showPlayerStats()">검색</button>
 
