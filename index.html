@@ -42,11 +42,6 @@
       color: #FFF;
       margin-bottom: 15px;
     }
-    .checkbox {
-      font-size: 0.9rem;
-      color: #FFF;
-      margin-top: 10px;
-    }
     .stats-container {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -78,9 +73,6 @@
       font-weight: bold;
       color: #FFF;
     }
-    .sub-stat {
-      font-size: 0.9rem;
-    }
   </style>
 </head>
 <body>
@@ -95,21 +87,29 @@
     <div class="card">
       <h3>출전 정보</h3>
       <table>
-        <tr><td>경기수</td><td id="games">-</td><td id="gamesRank">-</td></tr>
-        <tr><td>출전시간</td><td id="time">-</td><td id="timeRank">-</td></tr>
+        <tr><td>경기수</td><td id="games">-</td></tr>
+        <tr><td>출전시간</td><td id="time">-</td></tr>
       </table>
     </div>
     <div class="card">
       <h3>득점 정보</h3>
       <table>
-        <tr><td class="highlight">총 득점</td><td class="highlight" id="points">-</td><td class="highlight" id="pointsRank">-</td></tr>
-        <tr><td class="highlight">평균 득점</td><td class="highlight" id="ppg">-</td><td class="highlight" id="ppgRank">-</td></tr>
+        <tr><td class="highlight">총 득점</td><td class="highlight" id="points">-</td></tr>
+        <tr><td class="highlight">평균 득점</td><td class="highlight" id="ppg">-</td></tr>
+        <tr><td>평균 2P 시도</td><td id="2pa">-</td></tr>
+        <tr><td>평균 2P 성공</td><td id="2pm">-</td></tr>
+        <tr><td>평균 3P 시도</td><td id="3pa">-</td></tr>
+        <tr><td>평균 3P 성공</td><td id="3pm">-</td></tr>
+        <tr><td>평균 FT 시도</td><td id="fta">-</td></tr>
+        <tr><td>평균 FT 성공</td><td id="ftm">-</td></tr>
       </table>
     </div>
     <div class="card">
       <h3>Winshare</h3>
       <table>
-        <tr><td class="highlight">WS</td><td class="highlight" id="ws">-</td><td class="highlight" id="wsRank">-</td></tr>
+        <tr><td class="highlight">WS</td><td class="highlight" id="ws">-</td></tr>
+        <tr><td>OWS</td><td id="ows">-</td></tr>
+        <tr><td>DWS</td><td id="dws">-</td></tr>
       </table>
     </div>
   </div>
@@ -125,24 +125,25 @@
   }
 
   function showPlayerStats() {
-    const playerName = document.getElementById('searchPlayer').value.trim();
-    const playerData = originalData.find(cols => cols[2].trim() === playerName);
+    const playerNameInput = document.getElementById('searchPlayer').value.trim();
+    const playerData = originalData.find(cols => cols[2].trim() === playerNameInput);
 
     if (playerData) {
       document.getElementById('playerName').innerText = playerData[2];
-      document.getElementById('teamName').innerText = `(${playerData[1]})`;
-
+      document.getElementById('teamName').innerText = '(' + playerData[1] + ')';
       document.getElementById('games').innerText = playerData[3] + '경기';
       document.getElementById('time').innerText = playerData[4] + '분 ' + playerData[5] + '초';
       document.getElementById('points').innerText = playerData[6] + '점';
       document.getElementById('ppg').innerText = parseFloat(playerData[7]).toFixed(2) + '점';
+      document.getElementById('2pa').innerText = playerData[12];
+      document.getElementById('2pm').innerText = playerData[11];
+      document.getElementById('3pa').innerText = playerData[15];
+      document.getElementById('3pm').innerText = playerData[14];
+      document.getElementById('fta').innerText = playerData[18];
+      document.getElementById('ftm').innerText = playerData[17];
       document.getElementById('ws').innerText = parseFloat(playerData[30]).toFixed(1);
-
-      document.getElementById('gamesRank').innerText = '-';
-      document.getElementById('timeRank').innerText = '-';
-      document.getElementById('pointsRank').innerText = '-';
-      document.getElementById('ppgRank').innerText = '-';
-      document.getElementById('wsRank').innerText = '-';
+      document.getElementById('ows').innerText = parseFloat(playerData[31]).toFixed(1);
+      document.getElementById('dws').innerText = parseFloat(playerData[32]).toFixed(1);
     } else {
       alert('선수를 찾을 수 없습니다.');
     }
