@@ -18,20 +18,6 @@
       box-sizing: border-box;
       text-align: center;
     }
-    .tabs button {
-      background: #282828;
-      color: #FFF;
-      padding: 10px 20px;
-      border: none;
-      cursor: pointer;
-      margin: 0 5px;
-      font-weight: bold;
-      width: 160px;
-    }
-    .tabs button.active {
-      background: #E0E0E0;
-      color: #000;
-    }
     input, button {
       padding: 8px 15px;
       font-size: 1rem;
@@ -99,74 +85,70 @@
 </head>
 <body>
 <div class="container">
-  <h2>Basketball Stats Analyzer</h2>
-  <div class="tabs">
-    <button class="active">전체 선수 통계</button>
-    <button>선수 개인 검색</button>
-    <button>선수 비교</button>
-  </div>
-
   <input type="text" id="searchPlayer" placeholder="선수 이름 입력">
   <button onclick="showPlayerStats()">검색</button>
 
-  <div class="player-name" id="playerName">김선형</div>
-  <div class="team-name" id="teamName">(서울 SK 나이츠)</div>
-
-  <div class="checkbox">
-    <input type="checkbox" id="minGames" onchange="toggleRanking()">
-    <label for="minGames">규정 경기 이상 선수 기준(14G 이상)</label>
-  </div>
+  <div class="player-name" id="playerName">-</div>
+  <div class="team-name" id="teamName">-</div>
 
   <div class="stats-container">
-
     <div class="card">
       <h3>출전 정보</h3>
       <table>
-        <tr><td>경기수</td><td>32경기</td><td>15위</td></tr>
-        <tr><td>출전시간</td><td>28분 15초</td><td>11위</td></tr>
+        <tr><td>경기수</td><td id="games">-</td><td id="gamesRank">-</td></tr>
+        <tr><td>출전시간</td><td id="time">-</td><td id="timeRank">-</td></tr>
       </table>
     </div>
-
     <div class="card">
       <h3>득점 정보</h3>
       <table>
-        <tr><td class="highlight">총 득점</td><td class="highlight">486점</td><td class="highlight">5위</td></tr>
-        <tr><td class="highlight">평균 득점</td><td class="highlight">15.19점</td><td class="highlight">6위</td></tr>
-        <tr class="sub-stat"><td>평균 2P 시도</td><td>8.2개</td><td>8위</td></tr>
-        <tr class="sub-stat"><td>평균 2P 성공</td><td>4.3개</td><td>7위</td></tr>
-        <tr class="sub-stat"><td>평균 3P 시도</td><td>4.2개</td><td>10위</td></tr>
-        <tr class="sub-stat"><td>평균 3P 성공</td><td>1.7개</td><td>9위</td></tr>
-        <tr class="sub-stat"><td>평균 FT 시도</td><td>2.8개</td><td>4위</td></tr>
-        <tr class="sub-stat"><td>평균 FT 성공</td><td>2.4개</td><td>공동 4위</td></tr>
+        <tr><td class="highlight">총 득점</td><td class="highlight" id="points">-</td><td class="highlight" id="pointsRank">-</td></tr>
+        <tr><td class="highlight">평균 득점</td><td class="highlight" id="ppg">-</td><td class="highlight" id="ppgRank">-</td></tr>
       </table>
     </div>
-
     <div class="card">
       <h3>Winshare</h3>
       <table>
-        <tr><td class="highlight">WS</td><td class="highlight">5.7</td><td class="highlight">3위</td></tr>
-        <tr><td>OWS</td><td>3.2</td><td>2위</td></tr>
-        <tr><td>DWS</td><td>2.5</td><td>5위</td></tr>
+        <tr><td class="highlight">WS</td><td class="highlight" id="ws">-</td><td class="highlight" id="wsRank">-</td></tr>
       </table>
     </div>
-
   </div>
 </div>
 
 <script>
-  function showPlayerStats() {
-    let player = document.getElementById('searchPlayer').value;
-    document.getElementById('playerName').innerText = player;
+  let originalData = [];
+
+  async function loadPlayersData() {
+    const res = await fetch('https://docs.google.com/spreadsheets/d/1ez03AkQt4A5HWmo3jRAV3DOyfKfCU4xiI7XCjLRjwnE/export?format=csv');
+    const rows = (await res.text()).split('\n').slice(1);
+    originalData = rows.map(row => row.split(','));
   }
 
-  function toggleRanking() {
-    const checkbox = document.getElementById('minGames');
-    if (checkbox.checked) {
-      alert("규정 경기 이상 선수 기준으로 순위를 변경합니다.");
+  function showPlayerStats() {
+    const playerName = document.getElementById('searchPlayer').value.trim();
+    const playerData = originalData.find(cols => cols[2].trim() === playerName);
+
+    if (playerData) {
+      document.getElementById('playerName').innerText = playerData[2];
+      document.getElementById('teamName').innerText = `(${playerData[1]})`;
+
+      document.getElementById('games').innerText = playerData[3] + '경기';
+      document.getElementById('time').innerText = playerData[4] + '분 ' + playerData[5] + '초';
+      document.getElementById('points').innerText = playerData[6] + '점';
+      document.getElementById('ppg').innerText = parseFloat(playerData[7]).toFixed(2) + '점';
+      document.getElementById('ws').innerText = parseFloat(playerData[30]).toFixed(1);
+
+      document.getElementById('gamesRank').innerText = '-';
+      document.getElementById('timeRank').innerText = '-';
+      document.getElementById('pointsRank').innerText = '-';
+      document.getElementById('ppgRank').innerText = '-';
+      document.getElementById('wsRank').innerText = '-';
     } else {
-      alert("전체 선수 기준으로 순위를 변경합니다.");
+      alert('선수를 찾을 수 없습니다.');
     }
   }
+
+  window.onload = loadPlayersData;
 </script>
 </body>
 </html>
