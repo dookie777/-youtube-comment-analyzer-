@@ -43,7 +43,7 @@
     }
     .stats-container {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
       margin-top: 20px;
     }
@@ -51,15 +51,26 @@
       background-color: #1e1e1e;
       padding: 15px;
       border-radius: 10px;
-      text-align: left;
+      text-align: center;
     }
     .card h3 {
       margin-top: 0;
       border-bottom: 2px solid #333;
       padding-bottom: 5px;
     }
-    .stat-item {
-      margin: 5px 0;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #333;
+      text-align: center;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #FFD700;
     }
   </style>
 </head>
@@ -79,49 +90,33 @@
 
     <div class="card">
       <h3>출전 정보</h3>
-      <div class="stat-item">▪ 경기수: 32경기 (15위)</div>
-      <div class="stat-item">▪ 출전시간: 28분 15초 (11위)</div>
-    </div>
-
-    <div class="card">
-      <h3>Winshare</h3>
-      <div class="stat-item">▪ WS: 5.7 (3위)</div>
-      <div class="stat-item">▪ OWS: 3.2 (2위)</div>
-      <div class="stat-item">▪ DWS: 2.5 (5위)</div>
+      <table>
+        <tr><td>경기수</td><td>32경기</td><td>15위</td></tr>
+        <tr><td>출전시간</td><td>28분 15초</td><td>11위</td></tr>
+      </table>
     </div>
 
     <div class="card">
       <h3>득점 정보</h3>
-      <div class="stat-item">▪ 총 득점: 486점 (5위)</div>
-      <div class="stat-item">▪ 평균 득점: 15.19점 (6위)</div>
-      <div class="stat-item">▪ 2점슛 성공: 4.3개 (7위)</div>
-      <div class="stat-item">▪ 2점슛 시도: 8.2개 (8위)</div>
-      <div class="stat-item">▪ 3점슛 성공: 1.7개 (9위)</div>
-      <div class="stat-item">▪ 3점슛 시도: 4.2개 (10위)</div>
-      <div class="stat-item">▪ 자유투 성공: 2.4개 (5위)</div>
-      <div class="stat-item">▪ 자유투 시도: 2.8개 (4위)</div>
+      <table>
+        <tr><td class="highlight">총 득점</td><td class="highlight">486점</td><td class="highlight">5위</td></tr>
+        <tr><td class="highlight">평균 득점</td><td class="highlight">15.19점</td><td class="highlight">6위</td></tr>
+        <tr><td>평균 2P 시도</td><td>8.2개</td><td>8위</td></tr>
+        <tr><td>평균 2P 성공</td><td>4.3개</td><td>7위</td></tr>
+        <tr><td>평균 3P 시도</td><td>4.2개</td><td>10위</td></tr>
+        <tr><td>평균 3P 성공</td><td>1.7개</td><td>9위</td></tr>
+        <tr><td>평균 FT 시도</td><td>2.8개</td><td>4위</td></tr>
+        <tr><td>평균 FT 성공</td><td>2.4개</td><td>공동 4위</td></tr>
+      </table>
     </div>
 
     <div class="card">
-      <h3>Rating</h3>
-      <div class="stat-item">▪ Off Rating: 112.3 (3위)</div>
-      <div class="stat-item">▪ Def Rating: 101.8 (12위)</div>
-      <div class="stat-item">▪ Floor%: 55.4% (8위)</div>
-    </div>
-
-    <div class="card">
-      <h3>슛 성공률</h3>
-      <div class="stat-item">▪ FG%: 47.3% (14위)</div>
-      <div class="stat-item">▪ 2P%: 52.1% (8위)</div>
-      <div class="stat-item">▪ 3P%: 39.2% (12위)</div>
-      <div class="stat-item">▪ FT%: 85.4% (5위)</div>
-    </div>
-
-    <div class="card">
-      <h3>PER 및 효율성</h3>
-      <div class="stat-item">▪ PER: 18.2 (6위)</div>
-      <div class="stat-item">▪ Eff/Game: 18.8 (5위)</div>
-      <div class="stat-item">▪ Eff/40min: 24.6 (4위)</div>
+      <h3>Winshare</h3>
+      <table>
+        <tr><td class="highlight">WS</td><td class="highlight">5.7</td><td class="highlight">3위</td></tr>
+        <tr><td>OWS</td><td>3.2</td><td>2위</td></tr>
+        <tr><td>DWS</td><td>2.5</td><td>5위</td></tr>
+      </table>
     </div>
 
   </div>
