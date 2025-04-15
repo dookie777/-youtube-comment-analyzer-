@@ -119,6 +119,41 @@ th {
   background-color: #23343f; /* secondary와 동일한 하늘색으로 유지 */
   min-height: 380px; /* 이 숫자를 조정해서 원하는 길이로 만드세요 */
 }
+/* 검색 입력창 스타일 - 전체 선수 페이지와 동일하게 맞춤 */
+#searchPlayer {
+  width: 250px;
+  height: 30px;
+  padding: 5px 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  box-sizing: border-box;
+  margin-right: -4px; /* 버튼과 틈없이 연결 */
+  vertical-align: middle;
+}
+
+/* 검색 버튼 스타일 - 전체 선수 페이지와 동일하게 맞춤 */
+.search-btn {
+  height: 42px;
+  padding: 5px 15px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #88c2dd;
+  color: #121212;
+  border: none;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+/* 체크박스 스타일 - 여백 추가 */
+.checkbox-container {
+  margin-left: 15px;
+  vertical-align: middle;
+  color: #FFF;
+  font-size: 0.9rem;
+}
 
   </style>
 </head>
@@ -128,36 +163,11 @@ th {
 
 <div id="playerSearch">
 <div style="text-align:center; margin: 20px 0;">
-  <input type="text" id="searchPlayer" placeholder="Search player..."
-    style="
-      width: 300px;
-      height: 40px;
-      padding: 5px 15px;
-      font-size: 0.9rem;
-      border-radius: 8px;
-      border: none;
-      background-color: #fff;
-      color: #000;
-      vertical-align: middle;
-      box-sizing: border-box;
-      margin-right: -5px;"> <!-- 버튼과 틈 없이 연결 -->
-
-  <button onclick="showPlayerStats()"
-    style="
-      width: 80px;
-      height: 40px;
-      font-size: 0.8rem;
-      font-weight: bold;
-      border-radius: 8px;
-      background-color: #88c2dd;
-      color: #121212;
-      border: none;
-      vertical-align: middle;">
-    Search
-  </button>
-
+  <input type="text" id="searchPlayer" placeholder="Search player...">
+  <button class="search-btn" onclick="showPlayerStats()">Search</button>
+  
   <input type="checkbox" id="minGames" style="margin-left:30px; vertical-align: middle;">
-  <label for="minGames" style="color:#FFF; vertical-align: middle;">규정 경기 이상(14G)</label>
+  <label for="minGames" class="checkbox-container">규정 경기 이상(14G)</label>
 </div>
 
 
