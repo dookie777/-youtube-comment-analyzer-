@@ -116,6 +116,7 @@ th {
   padding-right: 10px; /* 스크롤바 겹침 방지 여백 */
 }
 .card.team-stats {
+  background-color: #23343f; /* secondary와 동일한 하늘색으로 유지 */
   min-height: 380px; /* 이 숫자를 조정해서 원하는 길이로 만드세요 */
 }
 
@@ -127,9 +128,11 @@ th {
 
 <div id="playerSearch">
 <div style="text-align:center; margin: 20px 0;">
-  <input type="text" id="searchPlayer" placeholder="선수 이름 입력" style="width:250px;height:30px;padding:5px 10px;font-size:1rem;border-radius:5px;border:none;">
-  <button onclick="showPlayerStats()" style="height:42px;padding:5px 15px;font-size:0.9rem;font-weight:bold;border-radius:5px;background-color:#88c2dd;color:#121212;border:none;">
-    검색
+  <input type="text" id="searchPlayer" placeholder="선수 이름 입력" 
+         style="width:300px;height:40px;padding:5px 15px;font-size:1rem;border-radius:20px;border:none;background-color:#2a2a2a;color:#ffffff;text-align:center;">
+  <button onclick="showPlayerStats()" 
+          style="height:42px;padding:5px 25px;font-size:1rem;font-weight:bold;border-radius:20px;background-color:#ffa500;color:#121212;border:none;">
+    Search
   </button>
 </div>
 <div class="player-name" id="playerName"></div>
