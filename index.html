@@ -10,7 +10,6 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      overflow: hidden;
     }
     .container {
       max-width: 1200px;
@@ -49,18 +48,30 @@
       margin-bottom: 15px;
       text-align: center;
     }
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 20px;
-    }
-    .card {
-      background-color: #1e1e1e;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-    }
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 250px); /* 약간 여유 높이 조정 추천 */
+}
+
+.card {
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* 1차 지표 카드 배경 (흐린 주황색) */
+.card.primary {
+  background-color: #3c2c20; /* 다크 모드에 맞춘 흐린 주황색 */
+}
+
+/* 2차 지표 카드 배경 (흐린 하늘색) */
+.card.secondary {
+  background-color: #23343f; /* 다크 모드에 맞춘 흐린 하늘색 */
+}
     .card h3 {
       margin-top: 0;
       border-bottom: 2px solid #333;
@@ -80,6 +91,7 @@
       font-weight: bold;
       color: #FFF;
     }
+
   </style>
 </head>
 <body>
@@ -112,115 +124,134 @@
     .map(row => row.split(','))
     .filter(cols => cols.length > 52);  }
 
-  function createCard(title, stats) {
-    let cardHTML = `<div class="card"><h3>${title}</h3><table>`;
-    stats.forEach(stat => {
-      cardHTML += `<tr><td class="${stat.highlight ? 'highlight' : ''}">${stat.label}</td><td class="${stat.highlight ? 'highlight' : ''}">${stat.value}</td></tr>`;
-    });
-    cardHTML += '</table></div>';
-    return cardHTML;
+function createCard(title, stats, type) {
+let cardHTML = `<div class="card ${type}"><h3>${title}</h3><table>`;
+  
+  // 테이블 헤더 추가
+  cardHTML += `<tr>
+    <th>지표</th>
+    <th>수치</th>
+    <th>리그 순위</th>
+  </tr>`;
+
+  stats.forEach(stat => {
+    cardHTML += `<tr>
+      <td class="${stat.highlight ? 'highlight' : ''}">${stat.label}</td>
+      <td class="${stat.highlight ? 'highlight' : ''}">${stat.value}</td>
+      <td>${stat.rank || '-'}</td>
+    </tr>`;
+  });
+
+  cardHTML += '</table></div>';
+  return cardHTML;
+}
+
+
+function showPlayerStats() {
+  const playerNameInput = document.getElementById('searchPlayer').value.trim();
+  const playerData = originalData.find(cols => cols[2].trim().toLowerCase().includes(playerNameInput.toLowerCase()));
+
+  if (playerData) {
+    document.getElementById('playerName').innerText = playerData[2];
+    document.getElementById('teamName').innerText = '(' + playerData[1] + ')';
+
+    const statsContainer = document.getElementById('statsContainer');
+    statsContainer.innerHTML = '';
+
+    statsContainer.innerHTML += createCard('기본 정보', [
+      {label: '출전 경기 수', value: playerData[3] + '경기', rank: playerData[7] + '위'},
+      {label: '평균 출전 시간', value: playerData[4] + '분 ' + playerData[5] + '초', rank: playerData[8] + '위'},
+      {label: '총 득점', value: playerData[9] + '점', rank: playerData[11] + '위', highlight: true},
+      {label: '평균 득점', value: parseFloat(playerData[10]).toFixed(2) + '점', rank: playerData[12] + '위', highlight: true}
+    ], 'primary');
+
+    statsContainer.innerHTML += createCard('슈팅', [
+      {label: '평균 FG 시도', value: playerData[15], rank: playerData[18] + '위'},
+      {label: '평균 FG 성공', value: playerData[16], rank: playerData[19] + '위'},
+      {label: '평균 2P 시도', value: playerData[23], rank: playerData[26] + '위'},
+      {label: '평균 2P 성공', value: playerData[24], rank: playerData[27] + '위'},
+      {label: '평균 3P 시도', value: playerData[31], rank: playerData[34] + '위'},
+      {label: '평균 3P 성공', value: playerData[32], rank: playerData[35] + '위'},
+      {label: '평균 FT 시도', value: playerData[39], rank: playerData[42] + '위'},
+      {label: '평균 FT 성공', value: playerData[40], rank: playerData[43] + '위'}
+    ], 'primary');
+
+    statsContainer.innerHTML += createCard('슈팅 성공률', [
+      {label: 'FG%', value: playerData[17] + '%', rank: playerData[20] + '위'},
+      {label: '2P%', value: playerData[25] + '%', rank: playerData[28] + '위'},
+      {label: '3P%', value: playerData[33] + '%', rank: playerData[36] + '위'},
+      {label: 'FT%', value: playerData[41] + '%', rank: playerData[44] + '위'}
+    ], 'primary');
+
+    statsContainer.innerHTML += createCard('리바운드', [
+      {label: '총 리바운드', value: playerData[45], rank: playerData[47] + '위', highlight: true},
+      {label: '평균 리바운드', value: parseFloat(playerData[46]).toFixed(2), rank: playerData[48] + '위', highlight: true},
+      {label: '공격 리바운드', value: playerData[49], rank: playerData[51] + '위'},
+      {label: '평균 공격 리바운드', value: parseFloat(playerData[50]).toFixed(2), rank: playerData[52] + '위'},
+      {label: '수비 리바운드', value: playerData[53], rank: playerData[55] + '위'},
+      {label: '평균 수비 리바운드', value: parseFloat(playerData[54]).toFixed(2), rank: playerData[56] + '위'}
+    ], 'primary');
+
+    statsContainer.innerHTML += createCard('어시스트/스틸/블록', [
+      {label: '총 어시스트', value: playerData[57], rank: playerData[59] + '위'},
+      {label: '평균 어시스트', value: parseFloat(playerData[58]).toFixed(2), rank: playerData[60] + '위'},
+      {label: '총 스틸', value: playerData[61], rank: playerData[63] + '위'},
+      {label: '평균 스틸', value: parseFloat(playerData[62]).toFixed(2), rank: playerData[64] + '위'},
+      {label: '총 블록', value: playerData[65], rank: playerData[67] + '위'},
+      {label: '평균 블록', value: parseFloat(playerData[66]).toFixed(2), rank: playerData[68] + '위'}
+    ], 'primary');
+
+
+statsContainer.innerHTML += createCard('기타', [
+  {label: '턴오버', value: playerData[69], rank: playerData[71] + '위'},
+  {label: '평균 턴오버', value: parseFloat(playerData[70]).toFixed(2), rank: playerData[72] + '위'},
+  {label: '파울', value: playerData[73], rank: playerData[75] + '위'},
+  {label: '평균 파울', value: parseFloat(playerData[74]).toFixed(2), rank: playerData[76] + '위'}
+], 'primary');
+
+
+statsContainer.innerHTML += createCard('WinShare', [
+  {label: 'WS', value: playerData[77], rank: playerData[81] + '위', highlight: true},
+  {label: 'WS/40', value: playerData[78], rank: playerData[82] + '위'},
+  {label: 'Offensive WS', value: playerData[79], rank: playerData[83] + '위'},
+  {label: 'Defensive WS', value: playerData[80], rank: playerData[84] + '위'}
+], 'secondary');
+
+
+statsContainer.innerHTML += createCard('효율성', [
+  {label: 'PER', value: playerData[87], rank: playerData[92] + '위'},
+  {label: 'EFF', value: playerData[88], rank: playerData[93] + '위'},
+  {label: 'EFF/40', value: playerData[89], rank: playerData[94] + '위'},
+  {label: 'Offensive Rating', value: playerData[85], rank: playerData[90] + '위'},
+  {label: 'Defensive Rating', value: playerData[86], rank: playerData[91] + '위'},
+  {label: 'USG%', value: playerData[97] + '%', rank: playerData[102] + '위'}
+], 'secondary');
+
+
+statsContainer.innerHTML += createCard('2차 슈팅 지표', [
+  {label: 'TS%', value: playerData[95] + '%', rank: playerData[100] + '위'},
+  {label: 'eFG%', value: playerData[96] + '%', rank: playerData[101] + '위'},
+  {label: '3PAr', value: playerData[98] + '%', rank: playerData[103] + '위'},
+  {label: 'FTr', value: playerData[99] + '%', rank: playerData[104] + '위'}
+], 'secondary');
+
+
+statsContainer.innerHTML += createCard('팀내 비중 지표', [
+  {label: 'ORB%', value: playerData[105] + '%', rank: playerData[112] + '위'},
+  {label: 'DRB%', value: playerData[106] + '%', rank: playerData[113] + '위'},
+  {label: 'TRB%', value: playerData[107] + '%', rank: playerData[114] + '위'},
+  {label: 'AST%', value: playerData[108] + '%', rank: playerData[115] + '위'},
+  {label: 'STL%', value: playerData[109] + '%', rank: playerData[116] + '위'},
+  {label: 'BLK%', value: playerData[110] + '%', rank: playerData[117] + '위'},
+  {label: 'TOV%', value: playerData[111] + '%', rank: playerData[118] + '위'}
+], 'secondary');
+
+
+  } else {
+    alert('선수를 찾을 수 없습니다.');
   }
+}
 
-  function showPlayerStats() {
-    const playerNameInput = document.getElementById('searchPlayer').value.trim();
-const playerData = originalData.find(cols => cols[2].trim().toLowerCase().includes(playerNameInput.toLowerCase()));
-
-    if (playerData) {
-      document.getElementById('playerName').innerText = playerData[2];
-      document.getElementById('teamName').innerText = '(' + playerData[1] + ')';
-
-      const statsContainer = document.getElementById('statsContainer');
-      statsContainer.innerHTML = '';
-
-      statsContainer.innerHTML += createCard('출전 정보', [
-        {label: '경기수', value: playerData[3] + '경기'},
-        {label: '출전시간', value: playerData[4] + '분 ' + playerData[5] + '초'}
-      ]);
-
-statsContainer.innerHTML += createCard('득점 정보', [
-  {label: '총 득점', value: playerData[6] ? playerData[6] + '점' : '0점', highlight: true},
-  {label: '평균 득점', value: playerData[7] ? parseFloat(playerData[7]).toFixed(2) + '점' : '0.00점', highlight: true},
-  {label: '평균 2P 시도', value: playerData[12] ? parseFloat(playerData[12]).toFixed(2) : '0.00'},
-  {label: '평균 2P 성공', value: playerData[11] ? parseFloat(playerData[11]).toFixed(2) : '0.00'},
-  {label: '평균 3P 시도', value: playerData[15] ? parseFloat(playerData[15]).toFixed(2) : '0.00'},
-  {label: '평균 3P 성공', value: playerData[14] ? parseFloat(playerData[14]).toFixed(2) : '0.00'},
-  {label: '평균 FT 시도', value: playerData[18] ? parseFloat(playerData[18]).toFixed(2) : '0.00'},
-  {label: '평균 FT 성공', value: playerData[17] ? parseFloat(playerData[17]).toFixed(2) : '0.00'}
-]);
-
-
-statsContainer.innerHTML += createCard('슛 성공률', [
-  {label: 'FG%', value: playerData[8] + '%'},
-  {label: '2P%', value: playerData[13] + '%'},
-  {label: '3P%', value: playerData[16] + '%'},
-  {label: 'FT%', value: playerData[19] + '%'}
-]);
-
-statsContainer.innerHTML += createCard('리바운드', [
-  {label: '총 리바운드', value: playerData[20] ? playerData[20] : '0', highlight: true},
-  {label: '평균 리바운드', value: playerData[21] ? parseFloat(playerData[21]).toFixed(2) : '0.00', highlight: true},
-  {label: '총 공격 리바운드', value: playerData[22] ? playerData[22] : '0'},
-  {label: '평균 공격 리바운드', value: playerData[22] && playerData[3] ? (parseFloat(playerData[22])/parseFloat(playerData[3])).toFixed(2) : '0.00'},
-  {label: '총 수비 리바운드', value: playerData[23] ? playerData[23] : '0'},
-  {label: '평균 수비 리바운드', value: playerData[23] && playerData[3] ? (parseFloat(playerData[23])/parseFloat(playerData[3])).toFixed(2) : '0.00'}
-]);
-
-
-statsContainer.innerHTML += createCard('어시스트/스틸/블록', [
-  {label: '총 AST', value: playerData[24] ? playerData[24] : '0'},
-  {label: '평균 AST', value: playerData[25] ? parseFloat(playerData[25]).toFixed(2) : '0.00'},
-  {label: '총 STL', value: playerData[26] ? playerData[26] : '0'},
-  {label: '평균 STL', value: playerData[27] ? parseFloat(playerData[27]).toFixed(2) : '0.00'},
-  {label: '총 BLK', value: playerData[28] ? playerData[28] : '0'},
-  {label: '평균 BLK', value: playerData[29] ? parseFloat(playerData[29]).toFixed(2) : '0.00'}
-]);
-
-
-      statsContainer.innerHTML += createCard('기타 지표', [
-  {label: 'TO', value: playerData[30]},
-  {label: 'PF', value: playerData[31]}
-]);
-
-statsContainer.innerHTML += createCard('Winshare', [
-  {label: 'WS', value: playerData[32] ? parseFloat(playerData[32]).toFixed(2) : '0.00', highlight: true},
-  {label: 'OWS', value: playerData[33] ? parseFloat(playerData[33]).toFixed(2) : '0.00'},
-  {label: 'DWS', value: playerData[34] ? parseFloat(playerData[34]).toFixed(2) : '0.00'}
-]);
-
-      statsContainer.innerHTML += createCard('Rating', [
-  {label: 'Off Rating', value: playerData[38]},
-  {label: 'Def Rating', value: playerData[39]},
-  {label: 'Floor%', value: playerData[40]}
-]);
-
-      statsContainer.innerHTML += createCard('PER 및 효율성', [
-  {label: 'PER', value: playerData[35]},
-  {label: 'Eff/Game', value: playerData[36]},
-  {label: 'Eff/40min', value: playerData[37]}
-]);
-
-      statsContainer.innerHTML += createCard('비율 지표', [
-  {label: 'TS%', value: playerData[41]},
-  {label: 'eFG%', value: playerData[42]},
-  {label: 'USG%', value: playerData[43]},
-  {label: '3PAr', value: playerData[44]},
-  {label: 'FTr', value: playerData[45]}
-]);
-
-      statsContainer.innerHTML += createCard('팀내 비중 지표', [
-  {label: 'ORB%', value: playerData[46]},
-  {label: 'DRB%', value: playerData[47]},
-  {label: 'TRB%', value: playerData[48]},
-  {label: 'AST%', value: playerData[49]},
-  {label: 'STL%', value: playerData[50]},
-  {label: 'BLK%', value: playerData[51]},
-  {label: 'TOV%', value: playerData[52]}
-]);
-
-    } else {
-      alert('선수를 찾을 수 없습니다.');
-    }
-  }
 
   window.onload = loadPlayersData;
 </script>
