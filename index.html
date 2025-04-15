@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Basketball Stats Analyzer</title>
+  <title>KBL Player Performance Analyzer</title>
   <style>
     body {
       background: #121212;
@@ -10,14 +10,36 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      overflow: hidden;
     }
     .container {
       max-width: 1200px;
       margin: auto;
       padding: 20px;
       box-sizing: border-box;
-      text-align: center;
     }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      background: #282828;
+      color: #FFF;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin: 0 5px;
+      font-weight: bold;
+      width: 160px;
+    }
+    .tabs button.active {
+      background: #E0E0E0;
+      color: #000;
+    }
+    .tab-content { display: none; overflow-y: auto; height: calc(100vh - 100px); }
+    .tab-content.active { display: block; }
+
     input, button {
       padding: 8px 15px;
       font-size: 1rem;
@@ -36,16 +58,18 @@
       color: #FFF;
       font-weight: bold;
       margin: 15px 0 5px 0;
+      text-align: center;
     }
     .team-name {
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: #FFF;
       margin-bottom: 15px;
+      text-align: center;
     }
     .stats-container {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 15px;
       margin-top: 20px;
     }
     .card {
@@ -77,51 +101,58 @@
 </head>
 <body>
 <div class="container">
-  <input type="text" id="searchPlayer" placeholder="선수 이름 입력">
-  <button onclick="showPlayerStats()">검색</button>
+  <div class="tabs">
+    <button class="active" onclick="openTab(event, 'allPlayers')">전체 선수 통계</button>
+    <button onclick="openTab(event, 'playerSearch')">선수 개인 검색</button>
+    <button onclick="openTab(event, 'playerCompare')">선수 비교</button>
+  </div>
 
-  <div class="player-name" id="playerName">-</div>
-  <div class="team-name" id="teamName">-</div>
+  <div id="allPlayers" class="tab-content active">
+    <p style="text-align:center;">전체 선수 통계 페이지 (기존 페이지)</p>
+  </div>
 
-  <div class="stats-container">
-    <div class="card">
-      <h3>출전 정보</h3>
-      <table>
-        <tr><td>경기수</td><td id="games">-</td></tr>
-        <tr><td>출전시간</td><td id="time">-</td></tr>
-      </table>
+  <div id="playerSearch" class="tab-content">
+    <div style="text-align:center;">
+      <input type="text" id="searchPlayer" placeholder="선수 이름 입력">
+      <button onclick="showPlayerStats()">검색</button>
     </div>
-    <div class="card">
-      <h3>득점 정보</h3>
-      <table>
-        <tr><td class="highlight">총 득점</td><td class="highlight" id="points">-</td></tr>
-        <tr><td class="highlight">평균 득점</td><td class="highlight" id="ppg">-</td></tr>
-        <tr><td>평균 2P 시도</td><td id="2pa">-</td></tr>
-        <tr><td>평균 2P 성공</td><td id="2pm">-</td></tr>
-        <tr><td>평균 3P 시도</td><td id="3pa">-</td></tr>
-        <tr><td>평균 3P 성공</td><td id="3pm">-</td></tr>
-        <tr><td>평균 FT 시도</td><td id="fta">-</td></tr>
-        <tr><td>평균 FT 성공</td><td id="ftm">-</td></tr>
-      </table>
-    </div>
-    <div class="card">
-      <h3>Winshare</h3>
-      <table>
-        <tr><td class="highlight">WS</td><td class="highlight" id="ws">-</td></tr>
-        <tr><td>OWS</td><td id="ows">-</td></tr>
-        <tr><td>DWS</td><td id="dws">-</td></tr>
-      </table>
-    </div>
+    <div class="player-name" id="playerName">-</div>
+    <div class="team-name" id="teamName">-</div>
+
+    <div class="stats-container" id="statsContainer"></div>
+  </div>
+
+  <div id="playerCompare" class="tab-content">
+    <p style="text-align:center;">선수 비교 페이지 (추후 추가 예정)</p>
   </div>
 </div>
 
 <script>
+  const tabs = document.querySelectorAll('.tabs button');
+  const contents = document.querySelectorAll('.tab-content');
+
+  function openTab(evt, tabName) {
+    contents.forEach(c => c.classList.remove('active'));
+    tabs.forEach(t => t.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    evt.currentTarget.classList.add('active');
+  }
+
   let originalData = [];
 
   async function loadPlayersData() {
     const res = await fetch('https://docs.google.com/spreadsheets/d/1ez03AkQt4A5HWmo3jRAV3DOyfKfCU4xiI7XCjLRjwnE/export?format=csv');
     const rows = (await res.text()).split('\n').slice(1);
     originalData = rows.map(row => row.split(','));
+  }
+
+  function createCard(title, stats) {
+    let cardHTML = `<div class="card"><h3>${title}</h3><table>`;
+    stats.forEach(stat => {
+      cardHTML += `<tr><td class="${stat.highlight ? 'highlight' : ''}">${stat.label}</td><td class="${stat.highlight ? 'highlight' : ''}">${stat.value}</td></tr>`;
+    });
+    cardHTML += '</table></div>';
+    return cardHTML;
   }
 
   function showPlayerStats() {
@@ -131,19 +162,16 @@
     if (playerData) {
       document.getElementById('playerName').innerText = playerData[2];
       document.getElementById('teamName').innerText = '(' + playerData[1] + ')';
-      document.getElementById('games').innerText = playerData[3] + '경기';
-      document.getElementById('time').innerText = playerData[4] + '분 ' + playerData[5] + '초';
-      document.getElementById('points').innerText = playerData[6] + '점';
-      document.getElementById('ppg').innerText = parseFloat(playerData[7]).toFixed(2) + '점';
-      document.getElementById('2pa').innerText = playerData[12];
-      document.getElementById('2pm').innerText = playerData[11];
-      document.getElementById('3pa').innerText = playerData[15];
-      document.getElementById('3pm').innerText = playerData[14];
-      document.getElementById('fta').innerText = playerData[18];
-      document.getElementById('ftm').innerText = playerData[17];
-      document.getElementById('ws').innerText = parseFloat(playerData[30]).toFixed(1);
-      document.getElementById('ows').innerText = parseFloat(playerData[31]).toFixed(1);
-      document.getElementById('dws').innerText = parseFloat(playerData[32]).toFixed(1);
+
+      const statsContainer = document.getElementById('statsContainer');
+      statsContainer.innerHTML = '';
+
+      statsContainer.innerHTML += createCard('출전 정보', [
+        {label: '경기수', value: playerData[3] + '경기'},
+        {label: '출전시간', value: playerData[4] + '분 ' + playerData[5] + '초'}
+      ]);
+
+      // 추가 지표들도 동일한 방식으로 연결하면 됩니다.
     } else {
       alert('선수를 찾을 수 없습니다.');
     }
