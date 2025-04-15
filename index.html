@@ -165,7 +165,7 @@ function showPlayerStats() {
       {label: '평균 득점', value: parseFloat(playerData[10]).toFixed(2) + '점', rank: playerData[12] + '위', highlight: true}
     ], 'primary');
 
-    statsContainer.innerHTML += createCard('슈팅', [
+    statsContainer.innerHTML += createCard('슈팅 지표', [
       {label: '평균 FG 시도', value: playerData[15], rank: playerData[18] + '위'},
       {label: '평균 FG 성공', value: playerData[16], rank: playerData[19] + '위'},
       {label: '평균 2P 시도', value: playerData[23], rank: playerData[26] + '위'},
@@ -177,13 +177,13 @@ function showPlayerStats() {
     ], 'primary');
 
     statsContainer.innerHTML += createCard('슈팅 성공률', [
-      {label: 'FG%', value: playerData[17] + '%', rank: playerData[20] + '위'},
-      {label: '2P%', value: playerData[25] + '%', rank: playerData[28] + '위'},
-      {label: '3P%', value: playerData[33] + '%', rank: playerData[36] + '위'},
-      {label: 'FT%', value: playerData[41] + '%', rank: playerData[44] + '위'}
+      {label: 'FG%', value: playerData[17], rank: playerData[20] + '위'},
+      {label: '2P%', value: playerData[25], rank: playerData[28] + '위'},
+      {label: '3P%', value: playerData[33], rank: playerData[36] + '위'},
+      {label: 'FT%', value: playerData[41], rank: playerData[44] + '위'}
     ], 'primary');
 
-    statsContainer.innerHTML += createCard('리바운드', [
+    statsContainer.innerHTML += createCard('리바운드 지표', [
       {label: '총 리바운드', value: playerData[45], rank: playerData[47] + '위', highlight: true},
       {label: '평균 리바운드', value: parseFloat(playerData[46]).toFixed(2), rank: playerData[48] + '위', highlight: true},
       {label: '공격 리바운드', value: playerData[49], rank: playerData[51] + '위'},
@@ -192,7 +192,7 @@ function showPlayerStats() {
       {label: '평균 수비 리바운드', value: parseFloat(playerData[54]).toFixed(2), rank: playerData[56] + '위'}
     ], 'primary');
 
-    statsContainer.innerHTML += createCard('어시스트/스틸/블록', [
+    statsContainer.innerHTML += createCard('어시스트/스틸/블록 지표', [
       {label: '총 어시스트', value: playerData[57], rank: playerData[59] + '위'},
       {label: '평균 어시스트', value: parseFloat(playerData[58]).toFixed(2), rank: playerData[60] + '위'},
       {label: '총 스틸', value: playerData[61], rank: playerData[63] + '위'},
@@ -202,7 +202,7 @@ function showPlayerStats() {
     ], 'primary');
 
 
-statsContainer.innerHTML += createCard('기타', [
+statsContainer.innerHTML += createCard('기타 지표', [
   {label: '턴오버', value: playerData[69], rank: playerData[71] + '위'},
   {label: '평균 턴오버', value: parseFloat(playerData[70]).toFixed(2), rank: playerData[72] + '위'},
   {label: '파울', value: playerData[73], rank: playerData[75] + '위'},
@@ -210,7 +210,7 @@ statsContainer.innerHTML += createCard('기타', [
 ], 'primary');
 
 
-statsContainer.innerHTML += createCard('WinShare', [
+statsContainer.innerHTML += createCard('WinShare 지표', [
   {label: 'WS', value: playerData[77], rank: playerData[81] + '위', highlight: true},
   {label: 'WS/40', value: playerData[78], rank: playerData[82] + '위'},
   {label: 'Offensive WS', value: playerData[79], rank: playerData[83] + '위'},
@@ -218,7 +218,7 @@ statsContainer.innerHTML += createCard('WinShare', [
 ], 'secondary');
 
 
-statsContainer.innerHTML += createCard('효율성', [
+statsContainer.innerHTML += createCard('효율성 지표', [
   {label: 'PER', value: playerData[87], rank: playerData[92] + '위'},
   {label: 'EFF', value: playerData[88], rank: playerData[93] + '위'},
   {label: 'EFF/40', value: playerData[89], rank: playerData[94] + '위'},
