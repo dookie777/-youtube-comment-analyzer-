@@ -115,7 +115,9 @@ th {
   height: calc(100vh - 250px);
   padding-right: 10px; /* 스크롤바 겹침 방지 여백 */
 }
-
+.card.team-stats {
+  min-height: 420px; /* 이 숫자를 조정해서 원하는 길이로 만드세요 */
+}
 
   </style>
 </head>
@@ -269,7 +271,9 @@ statsContainer.innerHTML += createCard('팀내 비중 지표', [
   {label: 'STL%', value: playerData[109] + '%', rank: playerData[116] + '위'},
   {label: 'BLK%', value: playerData[110] + '%', rank: playerData[117] + '위'},
   {label: 'TOV%', value: playerData[111] + '%', rank: playerData[118] + '위'}
-], 'secondary');
+], 'team-stats'); // 여기를 변경!
+
+
 
 
   } else {
