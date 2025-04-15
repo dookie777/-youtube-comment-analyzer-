@@ -112,10 +112,12 @@
   </div>
 
   <div id="playerSearch" class="tab-content">
-    <div style="text-align:center;">
-      <input type="text" id="searchPlayer" placeholder="선수 이름 입력">
-      <button onclick="showPlayerStats()">검색</button>
-    </div>
+<div style="text-align:center; margin: 20px 0;">
+  <input type="text" id="searchPlayer" placeholder="선수 이름 입력" style="width:250px;height:30px;padding:5px 10px;font-size:1rem;border-radius:5px;border:none;">
+  <button onclick="showPlayerStats()" style="height:42px;padding:5px 15px;font-size:0.9rem;font-weight:bold;border-radius:5px;background-color:#88c2dd;color:#121212;border:none;">
+    검색
+  </button>
+</div>
     <div class="player-name" id="playerName">-</div>
     <div class="team-name" id="teamName">-</div>
 
@@ -171,7 +173,83 @@
         {label: '출전시간', value: playerData[4] + '분 ' + playerData[5] + '초'}
       ]);
 
-      // 추가 지표들도 동일한 방식으로 연결하면 됩니다.
+statsContainer.innerHTML += createCard('득점 정보', [
+  {label: '총 득점', value: playerData[6] + '점', highlight: true},
+  {label: '평균 득점', value: parseFloat(playerData[7]).toFixed(2) + '점', highlight: true},
+  {label: '평균 2P 시도', value: playerData[12]},
+  {label: '평균 2P 성공', value: playerData[11]},
+  {label: '평균 3P 시도', value: playerData[15]},
+  {label: '평균 3P 성공', value: playerData[14]},
+  {label: '평균 FT 시도', value: playerData[18]},
+  {label: '평균 FT 성공', value: playerData[17]}
+]);
+
+statsContainer.innerHTML += createCard('슛 성공률', [
+  {label: 'FG%', value: playerData[8] + '%'},
+  {label: '2P%', value: playerData[13] + '%'},
+  {label: '3P%', value: playerData[16] + '%'},
+  {label: 'FT%', value: playerData[19] + '%'}
+]);
+
+statsContainer.innerHTML += createCard('리바운드', [
+  {label: '총 리바운드', value: playerData[20], highlight: true},
+  {label: '평균 리바운드', value: playerData[21], highlight: true},
+  {label: '총 공격 리바운드', value: playerData[22]},
+  {label: '평균 공격 리바운드', value: (playerData[22]/playerData[3]).toFixed(2)},
+  {label: '총 수비 리바운드', value: playerData[23]},
+  {label: '평균 수비 리바운드', value: (playerData[23]/playerData[3]).toFixed(2)}
+]);
+
+statsContainer.innerHTML += createCard('어시스트/스틸/블록', [
+  {label: '총 AST', value: playerData[24]},
+  {label: '평균 AST', value: parseFloat(playerData[25]).toFixed(2)},
+  {label: '총 STL', value: playerData[26]},
+  {label: '평균 STL', value: parseFloat(playerData[27]).toFixed(2)},
+  {label: '총 BLK', value: playerData[28]},
+  {label: '평균 BLK', value: parseFloat(playerData[29]).toFixed(2)}
+]);
+
+      statsContainer.innerHTML += createCard('기타 지표', [
+  {label: 'TO', value: playerData[30]},
+  {label: 'PF', value: playerData[31]}
+]);
+
+      statsContainer.innerHTML += createCard('Winshare', [
+  {label: 'WS', value: playerData[32], highlight: true},
+  {label: 'OWS', value: playerData[33]},
+  {label: 'DWS', value: playerData[34]}
+]);
+
+      statsContainer.innerHTML += createCard('Rating', [
+  {label: 'Off Rating', value: playerData[38]},
+  {label: 'Def Rating', value: playerData[39]},
+  {label: 'Floor%', value: playerData[40]}
+]);
+
+      statsContainer.innerHTML += createCard('PER 및 효율성', [
+  {label: 'PER', value: playerData[35]},
+  {label: 'Eff/Game', value: playerData[36]},
+  {label: 'Eff/40min', value: playerData[37]}
+]);
+
+      statsContainer.innerHTML += createCard('비율 지표', [
+  {label: 'TS%', value: playerData[41]},
+  {label: 'eFG%', value: playerData[42]},
+  {label: 'USG%', value: playerData[43]},
+  {label: '3PAr', value: playerData[44]},
+  {label: 'FTr', value: playerData[45]}
+]);
+
+      statsContainer.innerHTML += createCard('팀내 비중 지표', [
+  {label: 'ORB%', value: playerData[46]},
+  {label: 'DRB%', value: playerData[47]},
+  {label: 'TRB%', value: playerData[48]},
+  {label: 'AST%', value: playerData[49]},
+  {label: 'STL%', value: playerData[50]},
+  {label: 'BLK%', value: playerData[51]},
+  {label: 'TOV%', value: playerData[52]}
+]);
+
     } else {
       alert('선수를 찾을 수 없습니다.');
     }
