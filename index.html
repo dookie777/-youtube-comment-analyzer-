@@ -102,7 +102,7 @@ th {
 
 .highlight {
   font-weight: bold;
-  color: #ffd700;
+  color: inherit; /* 기존 텍스트 색상(흰색)으로 통일 */
 }
 
 /* 카드 크기 및 간격 조정 */
@@ -116,7 +116,7 @@ th {
   padding-right: 10px; /* 스크롤바 겹침 방지 여백 */
 }
 .card.team-stats {
-  min-height: 420px; /* 이 숫자를 조정해서 원하는 길이로 만드세요 */
+  min-height: 380px; /* 이 숫자를 조정해서 원하는 길이로 만드세요 */
 }
 
   </style>
@@ -132,8 +132,8 @@ th {
     검색
   </button>
 </div>
-    <div class="player-name" id="playerName">-</div>
-    <div class="team-name" id="teamName">-</div>
+<div class="player-name" id="playerName"></div>
+<div class="team-name" id="teamName"></div>
 
     <div class="stats-container" id="statsContainer"></div>
   </div>
