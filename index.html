@@ -128,12 +128,13 @@ th {
 
 <div id="playerSearch">
 <div style="text-align:center; margin: 20px 0;">
-  <input type="text" id="searchPlayer" placeholder="선수 이름 입력" 
-         style="width:300px;height:40px;padding:5px 15px;font-size:1rem;border-radius:20px;border:none;background-color:#2a2a2a;color:#ffffff;text-align:center;">
-  <button onclick="showPlayerStats()" 
-          style="height:42px;padding:5px 25px;font-size:1rem;font-weight:bold;border-radius:20px;background-color:#ffa500;color:#121212;border:none;">
+  <input type="text" id="searchPlayer" placeholder="Search player..." style="width:300px;height:45px;padding:5px 10px;font-size:1rem;border-radius:10px 0 0 10px;border:none;">
+  <button onclick="showPlayerStats()" style="height:45px;padding:5px 15px;font-size:0.9rem;font-weight:bold;border-radius:0 10px 10px 0;background-color:#4A90B2;color:#121212;border:none;">
     Search
   </button>
+  <input type="checkbox" id="minGames" style="margin-left:30px;">
+  <label for="minGames" style="color:#FFF;">규정 경기 이상만 표시(14G)</label>
+</div>
 </div>
 <div class="player-name" id="playerName"></div>
 <div class="team-name" id="teamName"></div>
