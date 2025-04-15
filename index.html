@@ -131,33 +131,35 @@ th {
   <input type="text" id="searchPlayer" placeholder="Search player..."
     style="
       width: 300px;
-      height: 42px;
+      height: 42px; /* 높이 42px로 통일 */
       padding: 5px 15px;
       font-size: 0.9rem;
-      border-radius: 10px; /* 양쪽 모두 둥근 형태 적용 */
+      border-radius: 10px;
       border: none;
       background-color: #fff;
       color: #000;
-      vertical-align: middle;">
+      vertical-align: middle;
+      box-sizing: border-box;"> <!-- box-sizing 추가 -->
 
   <button onclick="showPlayerStats()"
     style="
-      height: 42px;
-      padding: 5px 20px;
+      width: 100px; /* 버튼 너비 고정 (옵션) */
+      height: 42px; /* 입력창과 높이 통일 */
       font-size: 0.9rem;
       font-weight: bold;
-      border-radius: 10px; /* 버튼도 양쪽 모두 둥근 형태 적용 */
+      border-radius: 10px;
       background-color: #88c2dd;
       color: #121212;
       border: none;
-      margin-left: 10px; /* 버튼과 입력창 간격 확보 */
+      margin-left: 10px;
       vertical-align: middle;">
     Search
   </button>
 
   <input type="checkbox" id="minGames" style="margin-left:30px; vertical-align: middle;">
-  <label for="minGames" style="color:#FFF; vertical-align: middle;">규정 경기 이상(14G)</label>
+  <label for="minGames" style="color:#FFF; vertical-align: middle;">규정 경기 이상만 표시(14G)</label>
 </div>
+
 
 
 </div>
