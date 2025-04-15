@@ -64,36 +64,48 @@
 }
 
 .card.primary {
-  background-color: #5a3c20; /* 조금 더 밝고 깔끔한 주황색 계열로 변경 */
-  color: #ffffff; /* 흰색 글씨로 가독성 강화 */
+  background-color: #5a3c20;
+  color: #ffffff;
 }
 
 .card.secondary {
-  background-color: #335566; /* 조금 더 밝고 선명한 하늘색 계열로 변경 */
-  color: #ffffff; /* 흰색 글씨로 가독성 강화 */
+  background-color: #335566;
+  color: #ffffff;
 }
 
 .card h3 {
-  color: #ffd700; /* 카드 제목을 밝은 금색으로 설정 */
+  color: #ffd700;
   margin-top: 0;
-  border-bottom: 2px solid #666;
   padding-bottom: 5px;
+  border-bottom: none; /* 제목 밑줄 제거 */
 }
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      padding: 8px;
-      border-bottom: 1px solid #333;
-      text-align: center;
-    }
-    .highlight {
-      font-weight: bold;
-      color: #FFF;
-    }
+
+.card {
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 12px 8px; /* 데이터 간격 여유롭게 수정 */
+  border-bottom: 1px solid #ffffff; /* 데이터 구분선 하얀색으로 변경 */
+  font-size: 0.95rem; /* 가독성 좋은 폰트 크기 */
+}
+
+th {
+  font-weight: bold;
+}
+
+.highlight {
+  font-weight: bold;
+  color: #ffd700; /* 강조색을 제목과 동일하게 설정 */
+}
 
   </style>
 </head>
