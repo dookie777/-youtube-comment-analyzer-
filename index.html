@@ -235,7 +235,7 @@ thead th {
 }
 
 .card.team-stats {
-  min-height: 380px !important;
+  min-height: 350px !important;
 }
 
 .card.team-stats h3 {
@@ -299,6 +299,12 @@ thead th {
 
 
 /* ✅ 선수 개인 검색 페이지 간격 축소 (중요 수정) */
+#tab-player {
+  overflow-y: auto;
+  max-height: calc(100vh - 160px); /* 헤더 + 탭 버튼 등 여백 제외 */
+  padding-bottom: 100px; /* 푸터와 겹치지 않도록 공간 확보 */
+}
+    
 #tab-player .input-box {
   margin-bottom: 10px !important; /* 기존 20px → 절반으로 수정 */
 }
