@@ -30,10 +30,22 @@ body {
 .scroll-container {
   flex: 1;
   overflow: auto;
-  padding-bottom: 80px;     /* 푸터와 겹치지 않게 아래 여백 확보 */
-  position: relative;       /* sticky 기준 위치가 되도록 설정 */
+  position: relative;
+  padding-bottom: 80px;
+  max-height: calc(100vh - 240px); /* 상단 타이틀 + 탭 + 입력창 + 푸터 여유 고려 */
+}
+.tab-content.active {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
 }
 
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 /* 스크롤 시 헤더 열 (상단) 고정 */
 #tab-all thead th {
@@ -543,15 +555,6 @@ h2 {
   color: white;
   font-family: 'Poppins', sans-serif;
 }  
-#tab-all td:nth-child(1),
-#tab-all td:nth-child(2) {
-  z-index: 0 !important;
-}
-
-#tab-all th:nth-child(1),
-#tab-all th:nth-child(2) {
-  z-index: 1 !important;
-}
     
   </style>
 </head>
