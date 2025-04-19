@@ -990,8 +990,9 @@ function searchPlayer(){
 
   fixedRow.cells[0].appendChild(releaseBtn);
 
-  const tableBody = document.querySelector('#tableBody');
-  tableBody.insertBefore(fixedRow, tableBody.firstChild);  // ✅ 여기만 정확하게 바꾸시면 됩니다
+const fixedRowContainer = document.getElementById('fixedRowContainer');
+fixedRowContainer.innerHTML = ''; // 이전 것 제거
+fixedRowContainer.appendChild(fixedRow); // 새로 고정행 붙이기
 }
 
 function clearFixedRow() {
