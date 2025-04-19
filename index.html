@@ -975,43 +975,60 @@ function searchPlayer(){
   if (!found) alert("Player not found!");
 }
  
- function fixRow(row) {
+function fixRow(row) {
   clearFixedRow();
   fixedRow = row.cloneNode(true);
   fixedRow.classList.add('fixed-row', 'highlight');
+
+  // ✅ 고정 행 스타일
   fixedRow.style.position = 'sticky';
-  fixedRow.style.top = '0';  // 원래대로
-  fixedRow.style.backgroundColor = '#000';
+  fixedRow.style.top = '0'; // 상단에 정확히 고정
   fixedRow.style.zIndex = '999';
-  fixedRow.style.height = '42px';
+  fixedRow.style.backgroundColor = '#181818';
+  fixedRow.style.display = 'table';
+  fixedRow.style.width = '100%';
 
-const releaseBtn = document.createElement('button');
-releaseBtn.textContent = '해제';
-releaseBtn.style.position = 'absolute';
-releaseBtn.style.right = '10px';
-releaseBtn.style.top = '5px';
-releaseBtn.style.padding = '4px 8px';
-releaseBtn.style.fontSize = '0.8rem';
-releaseBtn.style.zIndex = '10000';
-releaseBtn.style.background = '#FFA500';
-releaseBtn.style.color = '#000';
-releaseBtn.style.border = 'none';
-releaseBtn.style.borderRadius = '4px';
-releaseBtn.style.cursor = 'pointer';
-releaseBtn.onclick = () => {
-  clearFixedRow();
-  document.getElementById('searchPlayerAll').value = "";
-};
+  // ✅ 내부 셀 스타일 보정
+  Array.from(fixedRow.cells).forEach(cell => {
+    cell.style.backgroundColor = '#181818';
+    cell.style.borderBottom = '1px solid #333';
+    cell.style.fontWeight = 'bold';
+    cell.style.padding = '10px 14px';
+  });
 
-// 고정행에 absolute 버튼 부착
-fixedRow.style.position = 'relative';  // ← 고정행에 기준점 설정
-fixedRow.appendChild(releaseBtn);
+  // ✅ 해제 버튼 추가 (절대 위치)
+  const releaseBtn = document.createElement('button');
+  releaseBtn.textContent = '해제';
+  releaseBtn.style.position = 'absolute';
+  releaseBtn.style.right = '16px';
+  releaseBtn.style.top = '8px';
+  releaseBtn.style.zIndex = '10000';
+  releaseBtn.style.padding = '4px 8px';
+  releaseBtn.style.background = '#FFA500';
+  releaseBtn.style.color = '#000';
+  releaseBtn.style.border = 'none';
+  releaseBtn.style.borderRadius = '4px';
+  releaseBtn.style.fontWeight = 'bold';
+  releaseBtn.style.cursor = 'pointer';
 
+  releaseBtn.onclick = () => {
+    clearFixedRow();
+    document.getElementById('searchPlayerAll').value = "";
+  };
+
+  // ✅ 버튼을 별도 wrapper에 넣고 고정행 위에 올림
+  const wrapper = document.createElement('div');
+  wrapper.style.position = 'relative';
+  wrapper.style.display = 'flex';
+  wrapper.style.alignItems = 'center';
+  wrapper.appendChild(fixedRow);
+  wrapper.appendChild(releaseBtn);
 
   const fixedRowContainer = document.getElementById('fixedRowContainer');
   fixedRowContainer.innerHTML = '';
-  fixedRowContainer.appendChild(fixedRow);
+  fixedRowContainer.appendChild(wrapper);
 }
+
 
 
 function clearFixedRow() {
@@ -1020,6 +1037,8 @@ function clearFixedRow() {
     originalRows.forEach(row => row.classList.remove('highlight'));
     fixedRow.remove();
   }
+  const container = document.getElementById('fixedRowContainer');
+  container.innerHTML = '';
   fixedRow = null;
 }
  
