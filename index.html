@@ -34,27 +34,6 @@ body {
   position: relative;       /* sticky 기준 위치가 되도록 설정 */
 }
 
-    
-#tab-all th:nth-child(1),
-#tab-all td:nth-child(1),
-#tab-all th:nth-child(2),
-#tab-all td:nth-child(2) {
-  position: sticky;
-  background-color: #282828 !important;
-  z-index: 10;
-}
-
-#tab-all th:nth-child(1),
-#tab-all td:nth-child(1) {
-  left: 0;
-  z-index: 11; /* 이름 열이 최우선으로 보이게 설정 */
-}
-
-#tab-all th:nth-child(2),
-#tab-all td:nth-child(2) {
-  left: 150px;
-  z-index: 10; /* 팀 열이 이름 열 다음으로 보이게 설정 */
-}
 
 /* 스크롤 시 헤더 열 (상단) 고정 */
 #tab-all thead th {
@@ -340,27 +319,7 @@ thead th {
   background-color: #000;
   pointer-events: none;
 }
-    
-#tab-all th:nth-child(1),
-#tab-all th:nth-child(2) {
-  position: sticky;
-  top: 0 !important;
-  background-color: #282828 !important;
-  z-index: 0 !important;
-}}
 
-#tab-all td:nth-child(1),
-#tab-all td:nth-child(2) {
-  position: sticky;
-  left: 0;
-  background-color: #282828 !important;
-  z-index: 400 !important;
-}
-
-#tab-all th:nth-child(2),
-#tab-all td:nth-child(2) {
-  left: 150px;
-}
 
 /* ✅ 선수 개인 검색 페이지 간격 축소 (중요 수정) */
 #tab-player .input-box {
