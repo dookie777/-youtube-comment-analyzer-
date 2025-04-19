@@ -590,7 +590,7 @@ h2 {
   </style>
 </head>
 <body>
-<div id="fixedRowContainer" style="position: sticky; top: 40px; left: 0; width: 100%; z-index: 9999;"></div>
+<div id="fixedRowContainer" style="position: sticky; top: 0; left: 0; width: 100%; z-index: 9999;"></div>
   <div class="side-logo left">
   <img src="Seoul_SK_Knights_logo.svg.png" alt="Seoul SK Knights Logo">
 </div>
@@ -980,25 +980,39 @@ function searchPlayer(){
   fixedRow = row.cloneNode(true);
   fixedRow.classList.add('fixed-row', 'highlight');
   fixedRow.style.position = 'sticky';
-  fixedRow.style.top = '34px';
+  fixedRow.style.top = '0';  // 원래대로
   fixedRow.style.backgroundColor = '#000';
-  fixedRow.style.zIndex = '500';
-  fixedRow.style.height = '42px';  // ← 이거 추가
+  fixedRow.style.zIndex = '999';
+  fixedRow.style.height = '42px';
 
-  const releaseBtn = document.createElement('button');
-  releaseBtn.textContent = '해제';
-  releaseBtn.style.marginLeft = '10px';
-  releaseBtn.onclick = () => {
-    clearFixedRow();
-    document.getElementById('searchPlayerAll').value = "";
-  };
+const releaseBtn = document.createElement('button');
+releaseBtn.textContent = '해제';
+releaseBtn.style.position = 'absolute';
+releaseBtn.style.right = '10px';
+releaseBtn.style.top = '5px';
+releaseBtn.style.padding = '4px 8px';
+releaseBtn.style.fontSize = '0.8rem';
+releaseBtn.style.zIndex = '10000';
+releaseBtn.style.background = '#FFA500';
+releaseBtn.style.color = '#000';
+releaseBtn.style.border = 'none';
+releaseBtn.style.borderRadius = '4px';
+releaseBtn.style.cursor = 'pointer';
+releaseBtn.onclick = () => {
+  clearFixedRow();
+  document.getElementById('searchPlayerAll').value = "";
+};
 
-  fixedRow.cells[0].appendChild(releaseBtn);
+// 고정행에 absolute 버튼 부착
+fixedRow.style.position = 'relative';  // ← 고정행에 기준점 설정
+fixedRow.appendChild(releaseBtn);
 
-const fixedRowContainer = document.getElementById('fixedRowContainer');
-fixedRowContainer.innerHTML = ''; // 이전 것 제거
-fixedRowContainer.appendChild(fixedRow); // 새로 고정행 붙이기
+
+  const fixedRowContainer = document.getElementById('fixedRowContainer');
+  fixedRowContainer.innerHTML = '';
+  fixedRowContainer.appendChild(fixedRow);
 }
+
 
 function clearFixedRow() {
   if (fixedRow) {
