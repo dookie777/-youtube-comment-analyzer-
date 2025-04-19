@@ -317,6 +317,12 @@ thead th {
   max-height: calc(100vh - 250px);
   overflow-y: auto;
 }
+    
+#tab-player .stats-container::after {
+  content: '';
+  display: block;
+  height: 80px;
+}
 
 /* ✅ 선수 비교 페이지 입력창 크기 및 영역 최적화 (중요 수정) */
 #tab-compare .input-box input[type="text"] {
