@@ -545,15 +545,6 @@ h2 {
   z-index: 10;
 }
 
-/* 2열 고정 - Team */
-#statsTable th:nth-child(2),
-#statsTable td:nth-child(2) {
-  position: sticky;
-  left: 150px;
-  z-index: 5;
-  background-color: #282828;
-}
-
 #statsTable th,
 #statsTable td {
   padding: 10px 14px;
@@ -567,8 +558,8 @@ h2 {
 
 .scroll-container {
   overflow: auto;
-  max-height: calc(100vh - 260px); /* 푸터 위에서 멈추도록 */
-  padding-bottom: 80px; /* 여백 확보 */
+  height: calc(100vh - 320px); /* 헤더 + 입력창 + 푸터 높이 고려 */
+  padding-bottom: 100px;       /* 푸터와 데이터 겹침 방지 */
 }
 
 .scroll-container::-webkit-scrollbar {
