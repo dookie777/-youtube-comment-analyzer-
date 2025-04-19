@@ -989,7 +989,6 @@ function clearFixedRow() {
   fixedRow = null;
 }
  
-<script>
   const sortDirections = {};
 
   document.querySelectorAll('#statsTable thead th').forEach((header, index) => {
@@ -1015,8 +1014,6 @@ function clearFixedRow() {
       rows.forEach(row => tableBody.appendChild(row));
     };
   });
-</script>
-
  
  window.onload = loadPlayersData;
  
