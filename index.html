@@ -850,7 +850,6 @@ async function loadPlayersData() {
 
 
 
-
 function renderTable(data) {
   const tableBody = document.getElementById('tableBody');
   tableBody.innerHTML = '';
@@ -941,6 +940,15 @@ tableBody.appendChild(spacerRow);
   initSortEvents(); // ✅ 이거 추가
 }
 // 이벤트 바인딩을 DOM이 완전히 렌더링된 다음 실행
+const sortDirections = {};
+
+function initSortEvents() {
+  const headers = document.querySelectorAll('#statsTable thead th');
+  headers.forEach((header, index) => {
+    sortDirections[index] = 'asc'; // 초기 방향 설정
+    header.onclick = () => sortTable(index); // 클릭 시 정렬 실행
+  });
+}
 
 
 
@@ -994,12 +1002,7 @@ function clearFixedRow() {
   fixedRow = null;
 }
  
- const sortDirections = {};
-document.querySelector('#tableBody').insertBefore(fixedRow, document.querySelector('#tableBody').firstChild); // ✅ 이걸로 대체
-   sortDirections[index] = 'asc';
-   header.onclick = () => sortTable(index);
- });
- 
+
  function sortTable(i) {
    const tableBody = document.getElementById('tableBody');
    const rows = [...tableBody.rows];
