@@ -180,14 +180,6 @@ thead th {
   z-index: 3;
 }
 
-#statsTable td:nth-child(2) {
-  position: sticky;
-  left: 150px;
-  background-color: #282828;
-  z-index: 2;
-}
-    
-
 .highlight { 
   color: #FFFF55 !important; 
   font-weight: bold; 
@@ -533,16 +525,15 @@ h2 {
   position: sticky;
   top: 0;
   background-color: #282828;
-  z-index: 9;
+  z-index: 10;
 }
 
-/* 1열 고정 - Player */
 #statsTable th:first-child,
 #statsTable td:first-child {
   position: sticky;
   left: 0;
   background-color: #282828;
-  z-index: 10;
+  z-index: 9;
 }
 
 #statsTable th,
@@ -558,8 +549,8 @@ h2 {
 
 .scroll-container {
   overflow: auto;
-  height: calc(100vh - 320px); /* 헤더 + 입력창 + 푸터 높이 고려 */
-  padding-bottom: 100px;       /* 푸터와 데이터 겹침 방지 */
+  height: calc(100vh - 320px); /* 푸터 포함 계산 */
+  padding-bottom: 100px;
 }
 
 .scroll-container::-webkit-scrollbar {
@@ -620,7 +611,7 @@ h2 {
      <thead>
   <tr>
     <th style="position: sticky; top: 0; left: 0; z-index: 6; background: #282828;">Player</th>
-    <th style="position: sticky; top: 0; left: 150px; z-index: 5; background: #282828;">Team</th>
+    <th style="position: sticky; top: 0; z-index: 5; background: #282828;">Team</th>
     <th style="position: sticky; top: 0; z-index: 5; background: #282828;">출전 경기 수</th>
     <th style="position: sticky; top: 0; z-index: 5; background: #282828;">출전 시간(초)</th>
     <th style="position: sticky; top: 0; z-index: 5; background: #282828;">득점</th>
