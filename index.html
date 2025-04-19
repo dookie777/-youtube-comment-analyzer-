@@ -267,7 +267,12 @@ thead th {
   background-color: #282828 !important;
   padding: 15px !important;
 }
-
+#tab-compare .compare-result::after {
+  content: '';
+  display: block;
+  height: 50px; /* ← 이 숫자가 공백 높이 */
+}
+    
 .highlight-first {
   background-color: rgba(255,140,0,0.95) !important;
   color: #FFF !important;
