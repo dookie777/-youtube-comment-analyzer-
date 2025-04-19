@@ -32,7 +32,7 @@ body {
   overflow: auto;
   position: relative;
   padding-bottom: 80px;
-  max-height: calc(100vh - 240px); /* 상단 타이틀 + 탭 + 입력창 + 푸터 여유 고려 */
+  max-height: calc(100vh - 250px); /* 화면에서 푸터 + 상단 버튼 제외 */
 }
 .tab-content.active {
   display: flex !important;
@@ -207,12 +207,12 @@ thead th {
   position: sticky;
   left: 0;
   background-color: #282828 !important;
-  z-index: 2;
+  z-index: 4;
 }
 
 /* ✅ 1행 + 1열 (헤더의 Player 칸) 고정 */
 #tab-all thead th:first-child {
-  z-index: 4;
+  z-index: 6;
 }
 
 
