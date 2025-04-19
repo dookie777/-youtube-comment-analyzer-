@@ -1018,8 +1018,20 @@ const currentSearch = document.getElementById('searchPlayerAll').value.trim();
    else clearFixedRow(); 
  }
  
- window.onload = loadPlayersData;
- 
+const sortDirections = {};
+
+function initSortEvents() {
+  const headers = document.querySelectorAll('#statsTable thead th');
+  headers.forEach((header, index) => {
+    sortDirections[index] = 'asc';
+    header.addEventListener('click', () => sortTable(index));
+  });
+}
+
+window.addEventListener('load', () => {
+  loadPlayersData();   // 기존 데이터 로드
+  initSortEvents();    // 헤더 클릭 시 정렬 기능 부여
+}); 
  document.getElementById('minGamesCheckbox').addEventListener('change', function() {
    renderTable(originalData);
  });
