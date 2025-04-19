@@ -988,35 +988,8 @@ function clearFixedRow() {
   }
   fixedRow = null;
 }
- 
-  const sortDirections = {};
 
-  document.querySelectorAll('#statsTable thead th').forEach((header, index) => {
-    sortDirections[index] = 'asc';
-    header.onclick = () => {
-      const tableBody = document.getElementById('tableBody');
-      const rows = Array.from(tableBody.querySelectorAll('tr'))
-        .filter(row => row.querySelectorAll('td').length > 0);
-
-      const direction = sortDirections[index] === 'asc' ? 'desc' : 'asc';
-      sortDirections[index] = direction;
-
-      rows.sort((a, b) => {
-        let x = a.cells[index]?.getAttribute('data-time') || a.cells[index]?.innerText || '';
-        let y = b.cells[index]?.getAttribute('data-time') || b.cells[index]?.innerText || '';
-
-        x = parseFloat(x.replace(/[^\\d.-]/g, '')) || 0;
-        y = parseFloat(y.replace(/[^\\d.-]/g, '')) || 0;
-
-        return direction === 'asc' ? x - y : y - x;
-      });
-
-      rows.forEach(row => tableBody.appendChild(row));
-    };
-  });
- 
- window.onload = loadPlayersData;
- 
+  
  document.getElementById('minGamesCheckbox').addEventListener('change', function() {
    renderTable(originalData);
  });
@@ -1574,6 +1547,41 @@ async function loadLocalFile() {
 
   
  </script>
+<script>
+const sortDirections = {};
+
+document.querySelectorAll('#statsTable thead th').forEach((header, index) => {
+  sortDirections[index] = 'asc';
+  header.onclick = () => {
+    const tableBody = document.getElementById('tableBody');
+    const rows = Array.from(tableBody.querySelectorAll('tr'))
+      .filter(row => row.querySelectorAll('td').length > 0);
+
+    const direction = sortDirections[index] === 'asc' ? 'desc' : 'asc';
+    sortDirections[index] = direction;
+
+    rows.sort((a, b) => {
+      let x = a.cells[index]?.getAttribute('data-time') || a.cells[index]?.innerText || '';
+      let y = b.cells[index]?.getAttribute('data-time') || b.cells[index]?.innerText || '';
+
+      // ✅ 위험 문자 제거
+      x = x.replace(/</g, '').replace(/>/g, '');
+      y = y.replace(/</g, '').replace(/>/g, '');
+
+      x = parseFloat(x.replace(/[^\d.-]/g, '')) || 0;
+      y = parseFloat(y.replace(/[^\d.-]/g, '')) || 0;
+
+      return direction === 'asc' ? x - y : y - x;
+    });
+
+    rows.forEach(row => tableBody.appendChild(row));
+  };
+});
+
+window.onload = function() {
+  loadPlayersData();
+};
+</script>
 
  
  </body>
