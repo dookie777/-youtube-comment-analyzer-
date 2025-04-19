@@ -1203,6 +1203,10 @@ statsContainer.innerHTML += createCard('Team내 비중 지표', [
   {label: 'TOV%', value: formatStatValue("TOV%", playerData["TOV%"]), rank: calculateRank(filteredData, "TOV%", playerData["TOV%"], false) + '위'}
 ], 'team-stats');
 
+const spacer = document.createElement('div');
+spacer.style.height = '100px';
+statsContainer.appendChild(spacer);
+
 
 
   } else {
