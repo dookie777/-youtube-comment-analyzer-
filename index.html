@@ -590,7 +590,7 @@ h2 {
   </style>
 </head>
 <body>
-<div id="fixedRowContainer" style="position: absolute; top: 47px; left: 0; width: 100%; z-index: 9999;"></div>
+<div id="fixedRowContainer" style="position: sticky; top: 40px; left: 0; width: 100%; z-index: 9999;"></div>
   <div class="side-logo left">
   <img src="Seoul_SK_Knights_logo.svg.png" alt="Seoul SK Knights Logo">
 </div>
@@ -979,6 +979,7 @@ function searchPlayer(){
   fixedRow.style.top = '34px';
   fixedRow.style.backgroundColor = '#000';
   fixedRow.style.zIndex = '500';
+  fixedRow.style.height = '42px';  // ← 이거 추가
 
   const releaseBtn = document.createElement('button');
   releaseBtn.textContent = '해제';
