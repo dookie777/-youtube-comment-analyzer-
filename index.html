@@ -1026,12 +1026,7 @@ const currentSearch = document.getElementById('searchPlayerAll').value.trim();
    else clearFixedRow(); 
  }
  
-function initSortEvents() {
-  const headers = document.querySelectorAll('#statsTable thead th');
-  headers.forEach((header, index) => {
-    header.onclick = () => sortTable(index);
-  });
-}
+
 window.addEventListener('load', () => {
   loadPlayersData();   // ✅ 데이터 로딩
   initSortEvents();    // ✅ 테이블 헤더 정렬 바인딩
