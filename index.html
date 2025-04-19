@@ -938,10 +938,10 @@ tableBody.appendChild(row);
 const spacerRow = document.createElement('tr');
 spacerRow.innerHTML = '<td colspan="100" style="height: 100px; background: transparent; border: none;"></td>';
 tableBody.appendChild(spacerRow);
+  initSortEvents(); // ✅ 이거 추가
+}
 // 이벤트 바인딩을 DOM이 완전히 렌더링된 다음 실행
-setTimeout(() => {
-  initSortEvents();
-}, 0);
+
 
 
  
@@ -1029,7 +1029,7 @@ function initSortEvents() {
 }
 window.addEventListener('load', () => {
   loadPlayersData();   // ✅ 데이터 로딩
-  initSortEvents();    // ✅ 정렬 이벤트 활성화
+  initSortEvents();    // ✅ 테이블 헤더 정렬 바인딩
 });
  document.getElementById('minGamesCheckbox').addEventListener('change', function() {
    renderTable(originalData);
