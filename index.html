@@ -245,7 +245,7 @@ thead th {
 #tab-compare .compare-result {
   max-width: none !important;
   height: calc(100vh - 260px);
-  padding: 15px;
+  padding: 5px;
   margin: 0 auto;
 }
 
@@ -1428,6 +1428,10 @@ if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
   tableHTML += '</tbody></table>';
   document.getElementById('compareResult').innerHTML = tableHTML;
   filterCompareTable();
+
+  const spacer = document.createElement('div');
+  spacer.style.height = '5px';
+  document.getElementById('compareResult').appendChild(spacer);
 }
 
 
