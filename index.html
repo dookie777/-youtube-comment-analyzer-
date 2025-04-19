@@ -1006,7 +1006,7 @@ function clearFixedRow() {
 
  function sortTable(i) {
    const tableBody = document.getElementById('tableBody');
-   const rows = [...tableBody.querySelectorAll("tr:not(.fixed-row)")];
+const rows = [...tableBody.querySelectorAll("tr:not(.fixed-row)")].filter(row => row.cells.length > i);
    const direction = sortDirections[i] === 'asc' ? 'desc' : 'asc';
    sortDirections[i] = direction;
  
