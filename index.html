@@ -823,7 +823,7 @@ const statsFormats = {
 async function loadPlayersData() {
   if (originalData.length === 0) {
     try {
-      const url = 'https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/23-24_KBL_stats.xlsx';
+const url = 'https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/23-24_KBL_stats.xlsx';
       const response = await fetch(url);
       const data = await response.arrayBuffer();
 
