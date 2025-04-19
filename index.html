@@ -590,7 +590,7 @@ h2 {
   </style>
 </head>
 <body>
-<div id="fixedRowContainer" style="position: sticky; top: 0; left: 0; width: 100%; z-index: 9999;"></div>
+<div id="fixedRowContainer" style="position: sticky; top: 40px; left: 0; width: 100%; z-index: 9999;"></div>
   <div class="side-logo left">
   <img src="Seoul_SK_Knights_logo.svg.png" alt="Seoul SK Knights Logo">
 </div>
@@ -867,7 +867,7 @@ function renderTable(data) {
     const seconds = totalSeconds % 60;
 
 const row = document.createElement('tr');
-row.innerHTML = `
+row.innerHTML = 
   <td>${playerName} <span class="${cols["출전 경기 수"] >= 20 ? 'valid' : 'warning'}">${status}</span></td>
   <td>${cols["Team"]}</td>
   <td>${formatStatValue("출전 경기 수", cols["출전 경기 수"])}</td>
@@ -931,17 +931,13 @@ row.innerHTML = `
   <td>${formatStatValue("STL%", cols["STL%"])}</td>
   <td>${formatStatValue("BS%", cols["BS%"])}</td>
   <td>${formatStatValue("TOV%", cols["TOV%"])}</td>
-`;
+;
 tableBody.appendChild(row);
   });
-
 // ✅ 푸터 여백 확보용 마지막 빈 행 추가
-if (!document.querySelector('#tableBody tr.spacer-row')) {
-  const spacerRow = document.createElement('tr');
-  spacerRow.classList.add('spacer-row');
-  spacerRow.innerHTML = '<td colspan="100" style="height: 100px; background: transparent; border: none;"></td>';
-  tableBody.appendChild(spacerRow);
-}
+const spacerRow = document.createElement('tr');
+spacerRow.innerHTML = '<td colspan="100" style="height: 100px; background: transparent; border: none;"></td>';
+tableBody.appendChild(spacerRow);
   initSortEvents(); // ✅ 이거 추가
 }
 // 이벤트 바인딩을 DOM이 완전히 렌더링된 다음 실행
@@ -975,61 +971,30 @@ function searchPlayer(){
   if (!found) alert("Player not found!");
 }
  
-function fixRow(row) {
+ function fixRow(row) {
   clearFixedRow();
   fixedRow = row.cloneNode(true);
   fixedRow.classList.add('fixed-row', 'highlight');
-
-  // ✅ 고정 행 스타일
   fixedRow.style.position = 'sticky';
-  fixedRow.style.top = '0'; // 상단에 정확히 고정
-  fixedRow.style.zIndex = '999';
-  fixedRow.style.backgroundColor = '#181818';
-  fixedRow.style.display = 'table';
-  fixedRow.style.width = '100%';
+  fixedRow.style.top = '34px';
+  fixedRow.style.backgroundColor = '#000';
+  fixedRow.style.zIndex = '500';
+  fixedRow.style.height = '42px';  // ← 이거 추가
 
-  // ✅ 내부 셀 스타일 보정
-  Array.from(fixedRow.cells).forEach(cell => {
-    cell.style.backgroundColor = '#181818';
-    cell.style.borderBottom = '1px solid #333';
-    cell.style.fontWeight = 'bold';
-    cell.style.padding = '10px 14px';
-  });
-
-  // ✅ 해제 버튼 추가 (절대 위치)
   const releaseBtn = document.createElement('button');
   releaseBtn.textContent = '해제';
-  releaseBtn.style.position = 'absolute';
-  releaseBtn.style.right = '16px';
-  releaseBtn.style.top = '8px';
-  releaseBtn.style.zIndex = '10000';
-  releaseBtn.style.padding = '4px 8px';
-  releaseBtn.style.background = '#FFA500';
-  releaseBtn.style.color = '#000';
-  releaseBtn.style.border = 'none';
-  releaseBtn.style.borderRadius = '4px';
-  releaseBtn.style.fontWeight = 'bold';
-  releaseBtn.style.cursor = 'pointer';
-
+  releaseBtn.style.marginLeft = '10px';
   releaseBtn.onclick = () => {
     clearFixedRow();
     document.getElementById('searchPlayerAll').value = "";
   };
 
-  // ✅ 버튼을 별도 wrapper에 넣고 고정행 위에 올림
-  const wrapper = document.createElement('div');
-  wrapper.style.position = 'relative';
-  wrapper.style.display = 'flex';
-  wrapper.style.alignItems = 'center';
-  wrapper.appendChild(fixedRow);
-  wrapper.appendChild(releaseBtn);
+  fixedRow.cells[0].appendChild(releaseBtn);
 
-  const fixedRowContainer = document.getElementById('fixedRowContainer');
-  fixedRowContainer.innerHTML = '';
-  fixedRowContainer.appendChild(wrapper);
+const fixedRowContainer = document.getElementById('fixedRowContainer');
+fixedRowContainer.innerHTML = ''; // 이전 것 제거
+fixedRowContainer.appendChild(fixedRow); // 새로 고정행 붙이기
 }
-
-
 
 function clearFixedRow() {
   if (fixedRow) {
@@ -1037,8 +1002,6 @@ function clearFixedRow() {
     originalRows.forEach(row => row.classList.remove('highlight'));
     fixedRow.remove();
   }
-  const container = document.getElementById('fixedRowContainer');
-  container.innerHTML = '';
   fixedRow = null;
 }
  
@@ -1281,7 +1244,7 @@ statsContainer.innerHTML += createCard('Team내 비중 지표', [
 });
 
 function createCard(title, stats, type = 'primary') {
-  return `
+  return 
     <div class="card ${type}">
       <h3>${title}</h3>
       <table>
@@ -1293,17 +1256,17 @@ function createCard(title, stats, type = 'primary') {
           </tr>
         </thead>
         <tbody>
-          ${stats.map(stat => `
+          ${stats.map(stat => 
             <tr>
               <td>${stat.label}</td>
               <td>${stat.value}</td>
               <td>${stat.rank}</td>
             </tr>
-          `).join('')}
+          ).join('')}
         </tbody>
       </table>
     </div>
-  `;
+  ;
 }
 
 
@@ -1331,7 +1294,7 @@ function formatStatValue(key, value) {
     const totalSeconds = parseInt(value, 10);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    return `${minutes}분 ${seconds}초`;
+    return ${minutes}분 ${seconds}초;
   }
 
   let numericValue = parseFloat(value);
@@ -1434,7 +1397,7 @@ function comparePlayers() {
     {label: 'TOV%', key: "TOV%", higherBetter: false}
   ];
 
-  let tableHTML = `<table><thead><tr><th>지표</th>${playersData.map(p => `<th>${p["Player"]} (${p["Team"]})</th>`).join('')}${playersData.length === 2 ? `<th>차이</th>` : ''}</tr></thead><tbody>`;
+  let tableHTML = <table><thead><tr><th>지표</th>${playersData.map(p => <th>${p["Player"]} (${p["Team"]})</th>).join('')}${playersData.length === 2 ? <th>차이</th> : ''}</tr></thead><tbody>;
 
   statsLabels.forEach(stat => {
     const values = playersData.map(p => parseFloat(p[stat.key]) || 0);
@@ -1450,10 +1413,10 @@ function comparePlayers() {
       });
     }
 
-    tableHTML += `<tr data-category="${getCategoryByStat(stat.label)}"><td>${stat.label}</td>`;
+    tableHTML += <tr data-category="${getCategoryByStat(stat.label)}"><td>${stat.label}</td>;
 
     values.forEach((value, idx) => {
-      tableHTML += `<td class="${highlightClass[idx]}">${formatStatValue(stat.key, value)} (${ranks[idx]}위)</td>`;
+      tableHTML += <td class="${highlightClass[idx]}">${formatStatValue(stat.key, value)} (${ranks[idx]}위)</td>;
     });
 
     if (playersData.length === 2) {
@@ -1466,16 +1429,16 @@ if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
   const diffSeconds = Math.abs(diff);
   const minutes = Math.floor(diffSeconds / 60);
   const seconds = diffSeconds % 60;
-  formattedDiff = `${minutes}분 ${seconds}초`;
+  formattedDiff = ${minutes}분 ${seconds}초;
 } else if (format.decimals === 0) {
-  formattedDiff = `${Math.abs(diff)}${format.unit}`;
+  formattedDiff = ${Math.abs(diff)}${format.unit};
 } else {
-  formattedDiff = `${Math.abs(diff).toFixed(format.decimals)}${format.unit}`;
+  formattedDiff = ${Math.abs(diff).toFixed(format.decimals)}${format.unit};
 }
 
 
 
-      tableHTML += `<td class="diff-cell ${diffClass}"><span>${formattedDiff}</span></td>`;
+      tableHTML += <td class="diff-cell ${diffClass}"><span>${formattedDiff}</span></td>;
     }
 
     tableHTML += '</tr>';
