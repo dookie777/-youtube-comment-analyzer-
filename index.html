@@ -575,6 +575,13 @@ h2 {
   background-color: #282828;
   z-index: 11;
 }
+
+/* 푸터 겹침 방지용 여백 */
+#statsTable::after {
+  content: '';
+  display: block;
+  height: 80px;
+}
     
   </style>
 </head>
