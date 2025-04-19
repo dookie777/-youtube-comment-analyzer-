@@ -1005,8 +1005,9 @@ function clearFixedRow() {
  
 
  function sortTable(i) {
+   clearFixedRow(); // ✅ 이 줄을 가장 위에 추가하세요
    const tableBody = document.getElementById('tableBody');
-const rows = [...tableBody.querySelectorAll("tr:not(.fixed-row)")].filter(row => row.cells.length > i);
+   const rows = [...tableBody.querySelectorAll("tr:not(.fixed-row)")].filter(row => row.cells.length > i);
    const direction = sortDirections[i] === 'asc' ? 'desc' : 'asc';
    sortDirections[i] = direction;
  
