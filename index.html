@@ -34,34 +34,28 @@ body {
   position: relative;       /* sticky 기준 위치가 되도록 설정 */
 }
 
-    
 #tab-all th:nth-child(1),
-#tab-all td:nth-child(1),
+#tab-all td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  background-color: #282828 !important;
+  z-index: 11;
+}
+
 #tab-all th:nth-child(2),
 #tab-all td:nth-child(2) {
   position: sticky;
+  left: 150px;
   background-color: #282828 !important;
   z-index: 10;
 }
-
-#tab-all th:nth-child(1),
-#tab-all td:nth-child(1) {
-  left: 0;
-  z-index: 11; /* 이름 열이 최우선으로 보이게 설정 */
-}
-
-#tab-all th:nth-child(2),
-#tab-all td:nth-child(2) {
-  left: 150px;
-  z-index: 10; /* 팀 열이 이름 열 다음으로 보이게 설정 */
-}
-
+    
 /* 스크롤 시 헤더 열 (상단) 고정 */
 #tab-all thead th {
   position: sticky;
   top: 0;
   background-color: #282828 !important;
-  z-index: 12; /* 열 제목이 가장 위에 오도록 설정 */
+  z-index: 12;
 }
 
 .container {
@@ -104,7 +98,6 @@ h2 {
   display: none !important;
   flex-direction: column;
   flex: 1;
-  overflow: hidden !important;
 }
 
 .tab-content.active {
@@ -203,19 +196,10 @@ th, td {
   font-weight: bold;
 }
 
-thead th {
-  background: #282828;
-  position: sticky;
-  top: 0;
-  cursor: pointer;
-  z-index: 500;
-}
-
 #tab-all th:nth-child(1), #tab-all td:nth-child(1),
 #tab-all th:nth-child(2), #tab-all td:nth-child(2) {
   position: sticky;
   background-color: #282828 !important;
-  z-index: 400;
 }
 
 #tab-all th:nth-child(1), #tab-all td:nth-child(1) {
@@ -585,15 +569,7 @@ h2 {
   color: white;
   font-family: 'Poppins', sans-serif;
 }  
-#tab-all td:nth-child(1),
-#tab-all td:nth-child(2) {
-  z-index: 0 !important;
-}
 
-#tab-all th:nth-child(1),
-#tab-all th:nth-child(2) {
-  z-index: 1 !important;
-}
     
   </style>
 </head>
@@ -721,9 +697,9 @@ h2 {
   </div>
 <div id="tab-compare" class="tab-content">
 <div class="input-box">
-  <input type="text" id="comparePlayer1" placeholder="선수 1 이름 입력">
-  <input type="text" id="comparePlayer2" placeholder="선수 2 이름 입력">
-  <input type="text" id="comparePlayer3" placeholder="선수 3 이름 입력 (선택)">
+  <input type="text" id="comparePlayer1" placeholder="Player 1">
+  <input type="text" id="comparePlayer2" placeholder="Player 2">
+  <input type="text" id="comparePlayer3" placeholder="Player 3(선택)">
 <button onclick="comparePlayers()">Compare</button>
   <input type="checkbox" id="compareMinGames">
   <label for="compareMinGames">규정 경기 이상(14G)</label>
