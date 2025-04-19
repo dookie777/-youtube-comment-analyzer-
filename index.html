@@ -174,10 +174,12 @@ thead th {
 }
 
 #statsTable td:first-child {
+  z-index: 3;
   position: sticky;
   left: 0;
   background-color: #282828;
-  z-index: 3;
+  max-height: calc(100vh - 100px); /* 현재 있음 */
+  contain: layout; /* ✅ 이 줄을 추가하면 sticky가 푸터를 넘지 못함 */
 }
 
 .highlight { 
@@ -282,7 +284,7 @@ thead th {
 }
 
 .footer {
-  z-index: 1 !important;
+  z-index: 9999 !important;
   text-align: center;
   padding: 10px;
   font-size: 0.8rem;
@@ -549,8 +551,10 @@ h2 {
 
 .scroll-container {
   overflow: auto;
-  height: calc(100vh - 320px); /* 푸터 포함 계산 */
+  height: calc(100vh - 320px);
   padding-bottom: 100px;
+  position: relative;
+  z-index: 1;
 }
 
 .scroll-container::-webkit-scrollbar {
@@ -929,8 +933,11 @@ row.innerHTML = `
   <td>${formatStatValue("TOV%", cols["TOV%"])}</td>
 `;
 tableBody.appendChild(row);
-
   });
+// ✅ 푸터 여백 확보용 마지막 빈 행 추가
+const spacerRow = document.createElement('tr');
+spacerRow.innerHTML = '<td colspan="100" style="height: 100px; background: transparent; border: none;"></td>';
+tableBody.appendChild(spacerRow);
 }
 
 
