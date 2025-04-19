@@ -320,14 +320,14 @@ thead th {
 #tab-player .stats-container {
   margin-top: 10px !important;
   padding-bottom: 0px !important; /* ✅ 푸터와 겹침 방지 여백 추가 */
-  max-height: calc(100vh - 250px);
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
 }
     
 #tab-player .stats-container::after {
   content: '';
   display: block;
-  height: 10px;
+  height: 0px;
 }
 
 /* ✅ 선수 비교 페이지 입력창 크기 및 영역 최적화 (중요 수정) */
@@ -1204,7 +1204,7 @@ statsContainer.innerHTML += createCard('Team내 비중 지표', [
 ], 'team-stats');
 
 const spacer = document.createElement('div');
-spacer.style.height = '10px';
+spacer.style.height = '5px';
 statsContainer.appendChild(spacer);
 
 
