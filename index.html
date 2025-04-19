@@ -312,7 +312,10 @@ thead th {
 }
 
 #tab-player .stats-container {
-  margin-top: 10px !important; /* 기존 20px → 절반으로 수정 */
+  margin-top: 10px !important;
+  padding-bottom: 60px;
+  max-height: calc(100vh - 250px); /* 헤더 + 버튼 박스 여백 고려 */
+  overflow-y: auto;
 }
 
 /* ✅ 선수 비교 페이지 입력창 크기 및 영역 최적화 (중요 수정) */
