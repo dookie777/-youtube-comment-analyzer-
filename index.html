@@ -313,8 +313,8 @@ thead th {
 
 #tab-player .stats-container {
   margin-top: 10px !important;
-  padding-bottom: 60px;
-  max-height: calc(100vh - 250px); /* 헤더 + 버튼 박스 여백 고려 */
+  padding-bottom: 100px !important; /* ✅ 푸터와 겹침 방지 여백 추가 */
+  max-height: calc(100vh - 250px);
   overflow-y: auto;
 }
 
