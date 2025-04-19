@@ -590,7 +590,6 @@ h2 {
   </style>
 </head>
 <body>
-<div id="fixedRowContainer" style="position: sticky; top: 40px; left: 0; width: 100%; z-index: 9999;"></div>
   <div class="side-logo left">
   <img src="Seoul_SK_Knights_logo.svg.png" alt="Seoul SK Knights Logo">
 </div>
@@ -851,6 +850,7 @@ async function loadPlayersData() {
 
 
 
+
 function renderTable(data) {
   const tableBody = document.getElementById('tableBody');
   tableBody.innerHTML = '';
@@ -938,19 +938,7 @@ tableBody.appendChild(row);
 const spacerRow = document.createElement('tr');
 spacerRow.innerHTML = '<td colspan="100" style="height: 100px; background: transparent; border: none;"></td>';
 tableBody.appendChild(spacerRow);
-  initSortEvents(); // ✅ 이거 추가
 }
-// 이벤트 바인딩을 DOM이 완전히 렌더링된 다음 실행
-const sortDirections = {};
-
-function initSortEvents() {
-  const headers = document.querySelectorAll('#statsTable thead th');
-  headers.forEach((header, index) => {
-    sortDirections[index] = 'asc';  // 기본 오름차순으로 초기화
-    header.onclick = () => sortTable(index);  // 클릭 시 정렬 실행
-  });
-}
-
 
 
  
@@ -979,7 +967,6 @@ function searchPlayer(){
   fixedRow.style.top = '34px';
   fixedRow.style.backgroundColor = '#000';
   fixedRow.style.zIndex = '500';
-  fixedRow.style.height = '42px';  // ← 이거 추가
 
   const releaseBtn = document.createElement('button');
   releaseBtn.textContent = '해제';
@@ -990,10 +977,7 @@ function searchPlayer(){
   };
 
   fixedRow.cells[0].appendChild(releaseBtn);
-
-const fixedRowContainer = document.getElementById('fixedRowContainer');
-fixedRowContainer.innerHTML = ''; // 이전 것 제거
-fixedRowContainer.appendChild(fixedRow); // 새로 고정행 붙이기
+  document.querySelector('#statsTable thead').after(fixedRow);
 }
 
 function clearFixedRow() {
@@ -1005,36 +989,37 @@ function clearFixedRow() {
   fixedRow = null;
 }
  
+<script>
+  const sortDirections = {};
 
- function sortTable(i) {
-   clearFixedRow(); // ✅ 이 줄을 가장 위에 추가하세요
-   const tableBody = document.getElementById('tableBody');
-   const rows = [...tableBody.querySelectorAll("tr:not(.fixed-row)")].filter(row => row.cells.length > i);
-   const direction = sortDirections[i] === 'asc' ? 'desc' : 'asc';
-   sortDirections[i] = direction;
- 
-   rows.sort((a, b) => {
-     let x, y;
-     if (i === 3) {
-       x = parseInt(a.cells[i].getAttribute('data-time'), 10);
-       y = parseInt(b.cells[i].getAttribute('data-time'), 10);
-     } else {
-       x = parseFloat(a.cells[i].innerText) || 0;
-       y = parseFloat(b.cells[i].innerText) || 0;
-     }
-     return direction === 'asc' ? x - y : y - x;
-   }).forEach(row => tableBody.appendChild(row));
- 
-const currentSearch = document.getElementById('searchPlayerAll').value.trim();
-   if (currentSearch !== "") searchPlayer(); 
-   else clearFixedRow(); 
- }
- 
+  document.querySelectorAll('#statsTable thead th').forEach((header, index) => {
+    sortDirections[index] = 'asc';
+    header.onclick = () => {
+      const tableBody = document.getElementById('tableBody');
+      const rows = Array.from(tableBody.querySelectorAll('tr'))
+        .filter(row => row.querySelectorAll('td').length > 0);
 
-window.addEventListener('load', () => {
-  loadPlayersData();   // ✅ 데이터 로딩
-  initSortEvents();    // ✅ 테이블 헤더 정렬 바인딩
-});
+      const direction = sortDirections[index] === 'asc' ? 'desc' : 'asc';
+      sortDirections[index] = direction;
+
+      rows.sort((a, b) => {
+        let x = a.cells[index]?.getAttribute('data-time') || a.cells[index]?.innerText || '';
+        let y = b.cells[index]?.getAttribute('data-time') || b.cells[index]?.innerText || '';
+
+        x = parseFloat(x.replace(/[^\\d.-]/g, '')) || 0;
+        y = parseFloat(y.replace(/[^\\d.-]/g, '')) || 0;
+
+        return direction === 'asc' ? x - y : y - x;
+      });
+
+      rows.forEach(row => tableBody.appendChild(row));
+    };
+  });
+</script>
+
+ 
+ window.onload = loadPlayersData;
+ 
  document.getElementById('minGamesCheckbox').addEventListener('change', function() {
    renderTable(originalData);
  });
