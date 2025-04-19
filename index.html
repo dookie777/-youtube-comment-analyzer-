@@ -32,7 +32,7 @@ body {
   overflow: auto;
   position: relative;
   padding-bottom: 80px;
-  max-height: calc(100vh - 250px); /* 화면에서 푸터 + 상단 버튼 제외 */
+  max-height: calc(100vh - 250px); /* 세로 스크롤 제한 정확히 적용 */
 }
 .tab-content.active {
   display: flex !important;
@@ -594,7 +594,7 @@ h2 {
 
   
   <div class="scroll-container" style="overflow:auto; flex:1;">
-    <table id="statsTable" style="width:max-content; min-width:100%;">
+<table id="statsTable" style="min-width: 100%;">
      <thead>
   <tr>
     <th>Player</th>
