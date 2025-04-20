@@ -384,10 +384,16 @@ thead th {
   margin: 0 auto;
   padding: 10px !important;
   overflow: auto !important;
-  height: calc(100vh - 210px) !important;  /* ← 이거 수정해야 함 */
+  height: calc(100vh - 230px) !important;  /* ✅ 정확한 스크롤 영역 지정 */
   box-sizing: border-box !important;
+  position: relative;
+  background-color: #121212 !important;
 }
-
+#tab-compare .compare-result::after {
+  content: '';
+  display: block;
+  height: 80px; /* ✅ 푸터와 겹치지 않도록 여백 확보 */
+}
 /* 테이블 너비 정확히 조정 */
 #tab-compare .compare-result table {
   width: 100% !important;
@@ -1428,14 +1434,6 @@ if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
   tableHTML += '</tbody></table>';
   document.getElementById('compareResult').innerHTML = tableHTML;
   filterCompareTable();
-
-  const spacer = document.createElement('div');
-  spacer.style.height = '5px';
-  document.getElementById('compareResult').appendChild(spacer);
-}
-
-
-
 
 // 엔터키 입력 기능 추가 (유지)
 ['comparePlayer1', 'comparePlayer2', 'comparePlayer3'].forEach(id => {
