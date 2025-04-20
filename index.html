@@ -261,6 +261,40 @@ thead th {
   text-overflow: ellipsis;
   padding: 10px 15px !important;
   font-size: 0.85rem !important;
+  border-left: 1px solid #444 !important;  /* ✅ 세로선 추가 */
+  border-right: 1px solid #444 !important; /* ✅ 세로선 추가 */
+}
+
+#tab-compare .compare-result th:first-child {
+  border-left: 1px solid #444 !important;
+}
+/* 첫 번째 셀 - 왼쪽 경계선 */
+#tab-compare .compare-result th:first-child,
+#tab-compare .compare-result td:first-child {
+  border-left: 1px solid #444 !important;
+}
+
+/* 마지막 셀 - 오른쪽 경계선 */
+#tab-compare .compare-result td:last-child {
+  border-right: 1px solid #444 !important;
+}
+
+/* 상단 테두리 보강 */
+#tab-compare .compare-result thead th {
+  border-top: 1px solid #444 !important;
+}
+
+/* 강조 셀(배경색 있는 셀) 테두리 통일 */
+#tab-compare .compare-result .highlight-first,
+#tab-compare .compare-result .highlight-second,
+#tab-compare .compare-result .highlight-third,
+#tab-compare .compare-result .diff-cell {
+  border: 1px solid #444 !important;
+}
+
+#tab-compare .compare-result table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
 }
 
 #tab-compare .compare-result th {
@@ -270,7 +304,7 @@ thead th {
 #tab-compare .compare-result::after {
   content: '';
   display: block;
-  height: 120px; /* ← 이 숫자가 공백 높이 */
+  height: 0px; /* ← 이 숫자가 공백 높이 */
 }
     
 .highlight-first {
@@ -370,6 +404,7 @@ thead th {
   overflow: auto !important;
   margin: 0 auto;
   padding: 10px !important;
+
 }
 
 #tab-compare .compare-result table {
@@ -383,23 +418,26 @@ thead th {
   width: 100% !important;
   margin: 0 auto;
   padding: 10px !important;
-  overflow: auto !important;
-  height: calc(100vh - 230px) !important;  /* ✅ 정확한 스크롤 영역 지정 */
+  padding-top: 0px !important;  /* ✅ 이 줄을 추가합니다 */
+  border-top: 1px solid #121212 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  max-height: 560px !important;  /* ← 이 줄이 바로 문제의 핵심입니다 */
   box-sizing: border-box !important;
   position: relative;
   background-color: #121212 !important;
+  scroll-padding-top: 40px;  /* ✅ 추가된 한 줄 */
+
 }
-#tab-compare .compare-result::after {
-  content: '';
-  display: block;
-  height: 80px; /* ✅ 푸터와 겹치지 않도록 여백 확보 */
-}
+
 /* 테이블 너비 정확히 조정 */
 #tab-compare .compare-result table {
   width: 100% !important;
-  min-width: 100% !important;
-  table-layout: fixed !important; /* 균일하게 너비 적용 */
+  min-width: 100% !important;          /* ✅ container 기준 제한 */
+  table-layout: fixed !important;      /* ✅ 각 셀 너비 고정 */
+  word-break: break-word !important;   /* ✅ 긴 텍스트 자동 줄바꿈 */
 }
+
 /* 스크롤 시 데이터가 헤더 뒤로 보이는 현상 수정 */
 #tab-compare .compare-result th {
   background-color: #282828 !important;
@@ -439,8 +477,7 @@ thead th {
   grid-template-columns: repeat(6, 1fr); /* 상단 6개 항목을 균등하게 나누기 위해 6칸 설정 */
   gap: 10px 20px; /* 세로 10px, 가로 20px 간격 */
   max-width: 900px;
-  margin: 10px auto;
-  justify-content: center;
+  margin: 10px auto 20px auto;  justify-content: center;
   align-items: center;
 }
 
@@ -1434,6 +1471,14 @@ if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
   tableHTML += '</tbody></table>';
   document.getElementById('compareResult').innerHTML = tableHTML;
   filterCompareTable();
+
+  const spacer = document.createElement('div');
+  spacer.style.height = '5px';
+  document.getElementById('compareResult').appendChild(spacer);
+}
+
+
+
 
 // 엔터키 입력 기능 추가 (유지)
 ['comparePlayer1', 'comparePlayer2', 'comparePlayer3'].forEach(id => {
