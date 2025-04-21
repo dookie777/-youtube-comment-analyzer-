@@ -87,8 +87,9 @@ h2 {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  margin-top: 0 !important;  /* 상단 여백은 그대로 두거나 10px 정도만 부여 */
+  margin-top: 0 !important;
   margin-bottom: 20px;
+  gap: 10px; /* ✅ 간격 동일하게 설정 */
 }
 
 .input-box input[type="text"],
@@ -723,19 +724,21 @@ h2 {
   }
 }
 .input-box select#seasonSelector {
-  width: 120px;
+  width: 130px;                 /* ✅ 크기 축소 */
   height: 42px;
-  background-color: #282828;  /* 다크 톤으로 변경 */
+  background-color: #181818;   /* ✅ 완전 어두운 톤으로 통일 */
   color: #fff;
   font-weight: bold;
   border: none;
   border-radius: 5px;
-  padding-left: 10px;
   font-size: 0.9rem;
+  padding: 0 10px;
+  text-align: center;          /* ✅ 텍스트 중앙 정렬 */
+  text-align-last: center;     /* ✅ 일부 브라우저용 중앙정렬 */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  cursor: pointer;
+  background-image: none;      /* ✅ 화살표 제거 */
 }
 .input-box {
   position: relative; /* 🔹 내부 요소의 위치 기준을 잡아줌 */
