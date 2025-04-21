@@ -3,7 +3,7 @@
 <head>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <meta charset="UTF-8">
-  <title>23-24 KBL Player Stats Analyzer</title>
+  <title>KBL Player Stats Analyzer</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
 
   <style>
@@ -53,7 +53,7 @@ h2 {
 
 .tabs {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .tabs button {
@@ -87,26 +87,20 @@ h2 {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px; /* ✅ 모든 요소 간 동일 간격 */
+  gap: 10px; /* ✅ 모든 간격 균일화 */
   margin-top: 0 !important;
   margin-bottom: 20px;
 }
 
 .input-box input[type="text"],
 .input-box button {
-.input-box select#seasonSelector {
-  margin: 0; /* ✅ 개별 마진 제거 */
-}
-.input-box {
-  gap: 12px; /* ✅ 간격은 이걸로 통일 */
-}
-  height: 42px !important; /* 정확히 버튼 높이와 동일하게 고정 */
-  padding: 5px 15px;
+  height: 42px;
+  padding: 0 15px;
   font-size: 0.9rem;
   border-radius: 5px;
   border: none;
-  margin: 10px;
-  box-sizing: border-box; /* padding과 border가 height에 포함되도록 설정 */
+  box-sizing: border-box;
+  margin: 0; /* ✅ margin 제거 */
 }
 
 
@@ -730,21 +724,25 @@ h2 {
   }
 }
 .input-box select#seasonSelector {
-  width: 110px;
+  width: 90px;
   height: 42px;
   background-color: #181818;
   color: #fff;
   font-weight: bold;
+  font-size: 0.85rem;
   border: none;
   border-radius: 5px;
-  font-size: 0.9rem;
-  text-align: center;
-  text-align-last: center;
-  padding: 0 10px;
+  padding: 0 5px; /* ✅ 오른쪽 공간 줄이기 */
+  margin: 0;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   background-image: none !important;
+  text-align: center;
+  text-align-last: center;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* ✅ 텍스트 완전 정중앙 */
 }
 .input-box select#seasonSelector::-ms-expand {
   display: none; /* IE에서 화살표 제거 */
@@ -761,7 +759,7 @@ h2 {
 </div>
 <div class="logo-title">
   <img src="https://github.com/dookie777/KBL-Player-Performance-Analyzer/blob/main/Logo_white.png?raw=true" alt="The Eroom Sports Logo" class="logo">
-  <span class="title">23–24 KBL Player Stats Analyzer</span>
+  <span class="title">KBL Player Stats Analyzer</span>
 </div>
   
   <div class="container">
