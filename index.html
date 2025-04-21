@@ -4,13 +4,11 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <meta charset="UTF-8">
   <title>23-24 KBL Player Stats Analyzer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
 
   <style>
 body { 
-
-
-  background-color: #121212; 
+background-color: #000000;
   background-image: 
     linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
@@ -266,7 +264,7 @@ thead th {
 }
 
 #tab-compare .compare-result th:first-child {
-  border-left: 1px solid #444 !important;
+  border-left: 0px solid #444 !important;
 }
 /* 첫 번째 셀 - 왼쪽 경계선 */
 #tab-compare .compare-result th:first-child,
@@ -284,13 +282,7 @@ thead th {
   border-top: 1px solid #444 !important;
 }
 
-/* 강조 셀(배경색 있는 셀) 테두리 통일 */
-#tab-compare .compare-result .highlight-first,
-#tab-compare .compare-result .highlight-second,
-#tab-compare .compare-result .highlight-third,
-#tab-compare .compare-result .diff-cell {
-  border: 1px solid #444 !important;
-}
+
 
 #tab-compare .compare-result table {
   border-collapse: separate !important;
@@ -457,6 +449,14 @@ thead th {
   font-size: 0.9rem !important; /* 폰트 크기 1.2rem으로 지정 */
 }
 
+#tab-compare .compare-result {
+  background-color: transparent !important;
+}
+
+#tab-compare .compare-result table {
+  background-color: transparent !important;
+}
+    
 /* 빨간 정삼각형 아이콘 추가 스타일 */
 .diff-positive::before {
   content: "▲";
@@ -467,7 +467,7 @@ thead th {
 /* 음수(-)값: 파란 역삼각형 아이콘 추가 */
 .diff-negative::before {
   content: "▼";
-  color: skyblue;
+  color: #007BFF; /* 완전한 파란색 */
   margin-right: 5px;
   font-size: 0.8rem;
 }
@@ -649,16 +649,106 @@ h2 {
   display: block;
   height: 80px;
 }
-    
+
+/* 테이블 셀 외곽선 정리 (모든 셀 동일 선 색) */
+#tab-compare .compare-result th,
+#tab-compare .compare-result td {
+  border: 1px solid #444 !important;
+}
+
+/* 강조 셀도 border 동일하게 */
+#tab-compare .compare-result .highlight-first,
+#tab-compare .compare-result .highlight-second,
+#tab-compare .compare-result .highlight-third,
+#tab-compare .compare-result .diff-cell {
+  border: 1px solid #444 !important;
+}
+
+/* 헤더 겹침 방지 및 시각적 안정성 */
+#tab-compare .compare-result thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  background-color: #282828 !important;
+  border-bottom: 2px solid #555 !important;
+}
+@media (max-width: 1200px) {
+  /* 1페이지: 로고/파일 버튼 숨김 */
+  .side-logo {
+    display: none !important;
+  }
+
+  .upload-box {
+    display: none !important;
+  }
+
+  /* 2페이지: 카드 3열 → 2열 */
+  #tab-player .stats-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* 3페이지: 비교 테이블 폭 자동 조정 */
+  #tab-compare .compare-result {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+  }
+}
+
+@media (max-width: 950px) {
+  /* 2페이지: 카드 2열 → 1열 */
+  #tab-player .stats-container {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+  }
+
+  /* 3페이지: 테이블 자동 폭 + 폰트 줄이기 */
+  #tab-compare .compare-result table {
+    width: 100% !important;
+    min-width: unset !important;
+    table-layout: auto !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* 3페이지: 폰트 더 작게 (모바일 극단적 대응) */
+  #tab-compare .compare-result table {
+    font-size: 0.75rem !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .upload-box {
+    display: none !important;
+  }
+}
+.input-box select#seasonSelector {
+  width: 180px;                /* 주황색 박스 크기 정도 */
+  height: 42px;                /* 버튼 높이와 맞춤 */
+  background-color: #ff8c00;  /* 주황색 배경 */
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding-left: 10px;
+  font-size: 0.9rem;
+  appearance: none;           /* ✅ 기본 셀렉트 UI 숨기기 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+.input-box select#seasonSelector::-ms-expand {
+  display: none;
+}
   </style>
 </head>
 <body>
   <div class="side-logo left">
-  <img src="Seoul_SK_Knights_logo.svg.png" alt="Seoul SK Knights Logo">
+<img src="https://github.com/dookie777/KBL-Player-Performance-Analyzer/raw/main/Seoul_SK_Knights_logo.svg.png" alt="Seoul SK Knights Logo">
 </div>
 
 <div class="side-logo right">
-  <img src="SK텔레콤_로고.svg.png" alt="SK Telecom Logo">
+<img src="https://github.com/dookie777/KBL-Player-Performance-Analyzer/raw/main/SK%ED%85%94%EB%A0%88%EC%BD%A4_%EB%A1%9C%EA%B3%A0.svg.png" alt="SK Telecom Logo">
 </div>
 <div class="logo-title">
   <img src="https://github.com/dookie777/KBL-Player-Performance-Analyzer/blob/main/Logo_white.png?raw=true" alt="The Eroom Sports Logo" class="logo">
@@ -674,13 +764,17 @@ h2 {
 
 <div id="tab-all" class="tab-content active">
   <div class="input-box">
+  <select id="seasonSelector" onchange="loadPlayersData()">
+  <option value="23-24">23-24 시즌</option>
+  <option value="24-25">24-25 시즌</option>
+  </select>
     <input type="text" id="searchPlayerAll" placeholder="Search player...">
     <button onclick="searchPlayer()">Search</button>
     <input type="checkbox" id="minGamesCheckbox">
     <label for="minGamesCheckbox">규정 경기 이상(14G)</label>
   </div>
 
-<div style="position:fixed; top:10px; right:10px; display:flex; align-items:center; gap:5px;">
+<div class="upload-box" style="position:fixed; top:10px; right:10px; display:flex; align-items:center; gap:5px;">
   <input type="file" id="fileUploader" accept=".xlsx, .xls" style="font-size:0.75rem; color:#FFF;">
   <button onclick="loadLocalFile()" style="background:#555; color:#FFF; padding:4px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer; border:none;">업로드</button>
 </div>
@@ -886,31 +980,33 @@ const statsFormats = {
  let originalData = [], highlightedPlayer = '', fixedRow = null;
  
 async function loadPlayersData() {
-  if (originalData.length === 0) {
-    try {
-const url = 'https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/23-24_KBL_stats.xlsx';
-      const response = await fetch(url);
-      const data = await response.arrayBuffer();
+  const season = document.getElementById('seasonSelector')?.value || '23-24';
+  const fileMap = {
+    '23-24': '23-24_KBL_stats.xlsx',
+    '24-25': '24-25_KBL_stats.xlsx'
+  };
+  const url = `https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`;
 
-      const workbook = XLSX.read(data, { type: "array" });
+  try {
+    const response = await fetch(url);
+    const data = await response.arrayBuffer();
+    const workbook = XLSX.read(data, { type: "array" });
+    const firstSheet = workbook.SheetNames[0];
+    originalData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
 
-      const firstSheet = workbook.SheetNames[0];
-      originalData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+    originalData.forEach(cols => {
+      let minutes = parseInt(cols["m"]) || 0;
+      let seconds = parseInt(cols["s"]) || 0;
+      cols["총 출전 시간(초)"] = minutes * 60 + seconds;
+    });
 
-      originalData.forEach(cols => {
-        let minutes = parseInt(cols["m"]) || 0;
-        let seconds = parseInt(cols["s"]) || 0;
-        cols["총 출전 시간(초)"] = minutes * 60 + seconds;
-      });
-
-      console.log("웹 데이터 로딩 성공!", originalData); // ✅ 확인용 로그
-      renderTable(originalData);
-
-    } catch (error) {
-      console.error("엑셀 데이터 로딩 오류:", error);
-      alert("엑셀 데이터 로딩 중 문제가 발생했습니다.");
-    }
+    renderTable(originalData);
+  } catch (error) {
+    console.error("데이터 로딩 오류:", error);
+    alert("데이터를 불러오는 중 문제가 발생했습니다.");
   }
+}
+
 }
 
 
