@@ -723,22 +723,30 @@ h2 {
   }
 }
 .input-box select#seasonSelector {
-  width: 180px;                /* 주황색 박스 크기 정도 */
-  height: 42px;                /* 버튼 높이와 맞춤 */
-  background-color: #ff8c00;  /* 주황색 배경 */
+  width: 120px;
+  height: 42px;
+  background-color: #282828;  /* 다크 톤으로 변경 */
   color: #fff;
   font-weight: bold;
   border: none;
   border-radius: 5px;
   padding-left: 10px;
   font-size: 0.9rem;
-  appearance: none;           /* ✅ 기본 셀렉트 UI 숨기기 */
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
 }
-.input-box select#seasonSelector::-ms-expand {
-  display: none;
+.input-box {
+  position: relative; /* 🔹 내부 요소의 위치 기준을 잡아줌 */
+}
+
+.input-box select#seasonSelector {
+  background-image: url(...);       /* 🔸 화살표 SVG 아이콘 */
+  background-repeat: no-repeat;     /* 반복 금지 */
+  background-position: right 10px center; /* 🔹 오른쪽 정렬 + 세로 중앙 정렬 */
+  background-size: 12px;            /* 🔸 아이콘 크기 */
+  padding-right: 30px;              /* 🔹 텍스트와 화살표 간 여백 확보 */
 }
   </style>
 </head>
