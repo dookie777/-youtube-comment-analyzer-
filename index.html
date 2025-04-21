@@ -87,9 +87,9 @@ h2 {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  gap: 12px; /* ✅ 모든 요소 간 동일 간격 */
   margin-top: 0 !important;
   margin-bottom: 20px;
-  gap: 10px; /* ✅ 간격 동일하게 설정 */
 }
 
 .input-box input[type="text"],
@@ -724,21 +724,21 @@ h2 {
   }
 }
 .input-box select#seasonSelector {
-  width: 130px;                 /* ✅ 크기 축소 */
+  width: 130px;
   height: 42px;
-  background-color: #181818;   /* ✅ 완전 어두운 톤으로 통일 */
+  background: #181818;       /* ✅ 완전 어두운 색상 */
   color: #fff;
   font-weight: bold;
   border: none;
   border-radius: 5px;
-  font-size: 0.9rem;
   padding: 0 10px;
-  text-align: center;          /* ✅ 텍스트 중앙 정렬 */
-  text-align-last: center;     /* ✅ 일부 브라우저용 중앙정렬 */
+  font-size: 0.9rem;
+  text-align: center;
+  text-align-last: center;   /* ✅ 중앙 정렬 */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-image: none;      /* ✅ 화살표 제거 */
+  background-image: none;    /* ✅ 기본 화살표 완전 제거 */
 }
 .input-box {
   position: relative; /* 🔹 내부 요소의 위치 기준을 잡아줌 */
@@ -750,6 +750,9 @@ h2 {
   background-position: right 10px center; /* 🔹 오른쪽 정렬 + 세로 중앙 정렬 */
   background-size: 12px;            /* 🔸 아이콘 크기 */
   padding-right: 30px;              /* 🔹 텍스트와 화살표 간 여백 확보 */
+}
+.input-box select#seasonSelector::-ms-expand {
+  display: none; /* IE에서 화살표 제거 */
 }
   </style>
 </head>
