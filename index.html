@@ -1507,15 +1507,18 @@ function comparePlayers() {
   const player3 = document.getElementById('comparePlayer3').value.trim();
   const minGamesChecked = document.getElementById('compareMinGames').checked;
 
+    if (!player1 && !player2 && !player3) {
+    document.getElementById('compareResult').innerHTML = '';
+    return;
+  }
+
   let filteredData = minGamesChecked
     ? originalData.filter(cols => parseInt(cols["출전 경기 수"]) >= 14)
     : originalData;
 
-playersData.length = 0; // 기존 데이터 초기화
-playersData.push(...[player1, player2, player3]
-  .filter(name => name !== '')
-  .map(name => filteredData.find(cols => cols["Player"].trim().toLowerCase().includes(name.trim().toLowerCase())))
-);
+playersData = [player1, player2, player3]
+    .filter(name => name !== '')
+    .map(name => filteredData.find(cols => cols["Player"].trim().toLowerCase().includes(name.trim().toLowerCase())));
 
 if (playersData.some(data => data === undefined)) {
   alert('선수 이름을 정확히 입력해주세요.');
