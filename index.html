@@ -1036,7 +1036,7 @@ const statsFormats = {
      tab.classList.add('active');
    };
  });
- 
+ let playerDataBySeason = {};  // ✅ 이 줄을 추가
  let originalData = [], highlightedPlayer = '', fixedRow = null;
   let playersData = [];
 
@@ -1229,6 +1229,7 @@ function calculateRank(filteredData, statKey, playerValue, isHigherBetter = true
 }
 
 function showPlayerStats() {
+  const season = document.getElementById('seasonSelectorPlayer')?.value || '23-24';
   const playerNameInput = document.getElementById('searchPlayer').value.trim();
 
   const minGamesChecked = document.getElementById('minGames').checked;
@@ -1512,11 +1513,10 @@ playersData = [player1, player2, player3]
     .filter(name => name !== '')
     .map(name => filteredData.find(cols => cols["Player"].trim().toLowerCase().includes(name.trim().toLowerCase())));
 
-  if (playersData.some(data => data === undefined)) {
-    alert('선수 이름을 정확히 입력해주세요.');
-    return;
-  document.getElementById('compareResult').appendChild(spacer);
-}  // ← 이 줄이 comparePlayers() 함수 종료!
+if (playersData.some(data => data === undefined)) {
+  alert('선수 이름을 정확히 입력해주세요.');
+  return;
+}  // ← 반드시 여기서 함수 닫기
 
 // ✅ 여기부터 새로 붙여넣기
 function changeSeason(playerIndex, season) {
@@ -1876,18 +1876,21 @@ function loadPlayersData2() {
     .then(data => {
       const workbook = XLSX.read(data, { type: "array" });
       const firstSheet = workbook.SheetNames[0];
-      originalData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+      const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
 
-      originalData.forEach(cols => {
-        let minutes = parseInt(cols["m"]) || 0;
-        let seconds = parseInt(cols["s"]) || 0;
+      jsonData.forEach(cols => {
+        const minutes = parseInt(cols["m"]) || 0;
+        const seconds = parseInt(cols["s"]) || 0;
         cols["총 출전 시간(초)"] = minutes * 60 + seconds;
       });
 
-      const currentInput = document.getElementById('searchPlayer').value.trim();
-      if (currentInput !== "") {
-        showPlayerStats();
-      }
+      // ✅ 여기부터 추가
+      originalData = jsonData;
+
+      setTimeout(() => {
+        const currentInput = document.getElementById('searchPlayer').value.trim();
+        if (currentInput !== "") showPlayerStats();
+      }, 200);
     })
     .catch(error => {
       console.error("선수 개인 데이터 로딩 오류:", error);
@@ -1895,8 +1898,10 @@ function loadPlayersData2() {
     });
 }
 
+
 window.onload = function() {
-  loadPlayersData();
+  loadPlayersData();  // 1페이지
+  loadPlayersData2(); // ✅ 2페이지 초기 데이터도 함께 로딩
 };
 </script>
 
