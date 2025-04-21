@@ -936,7 +936,7 @@ h2 {
     <input type="text" id="comparePlayer1" placeholder="Player 1">
     <input type="text" id="comparePlayer2" placeholder="Player 2">
     <input type="text" id="comparePlayer3" placeholder="Player 3(선택)">
-    <button onclick="comparePlayers()">Compare</button>
+    <button id="compareButton">Compare</button>
     <input type="checkbox" id="compareMinGames">
     <label for="compareMinGames">규정 경기 이상(14G)</label>
   </div>
@@ -1511,53 +1511,13 @@ function comparePlayers() {
     ? originalData.filter(cols => parseInt(cols["출전 경기 수"]) >= 14)
     : originalData;
 
-playersData = [player1, player2, player3]
+  playersData = [player1, player2, player3]
     .filter(name => name !== '')
     .map(name => filteredData.find(cols => cols["Player"].trim().toLowerCase().includes(name.trim().toLowerCase())));
 
-if (playersData.some(data => data === undefined)) {
-  alert('선수 이름을 정확히 입력해주세요.');
-  return;
-}  // ← 반드시 여기서 함수 닫기
-
-// ✅ 여기부터 새로 붙여넣기
-function changeSeason(playerIndex, season) {
-  const playerName = document.getElementById(`comparePlayer${playerIndex + 1}`)?.value.trim();
-  if (!playerName) return;
-
-  const fileMap = {
-    '23-24': '23-24_KBL_stats.xlsx',
-    '24-25': '24-25_KBL_stats.xlsx'
-  };
-  const url = `https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`;
-
-  fetch(url)
-    .then(response => response.arrayBuffer())
-    .then(data => {
-      const workbook = XLSX.read(data, { type: "array" });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const seasonData = XLSX.utils.sheet_to_json(sheet);
-
-      const matchedPlayer = seasonData.find(p =>
-        p["Player"]?.trim().toLowerCase() === playerName.toLowerCase()
-      );
-
-      if (!matchedPlayer) {
-        alert(`${playerName}의 ${season} 시즌 데이터가 없습니다.`);
-        return;
-      }
-
-      matchedPlayer.__season = season;
-      playersData[playerIndex] = matchedPlayer;
-      comparePlayers();  // 다시 렌더링
-    })
-    .catch(err => {
-      console.error("시즌 데이터 로딩 오류:", err);
-      alert("시즌 변경 중 오류 발생");
-    });
-}
-
-  
+  if (playersData.some(data => data === undefined)) {
+    alert('선수 이름을 정확히 입력해주세요.');
+    return;
   }
 
   const statsLabels = [
@@ -1605,14 +1565,14 @@ function changeSeason(playerIndex, season) {
     {label: 'WS/40', key: "WS/40", higherBetter: true},
     {label: 'Offensive_WS', key: "Offensive_WS", higherBetter: true},
     {label: 'Defensive_WS', key: "Defensive_WS", higherBetter: true},
-    {label: 'Offensive_rating', key: "Offensive_rating", higherBetter: true},
-    {label: 'Defensive_rating', key: "Defensive_rating", higherBetter: false},
     {label: 'PER', key: "PER", higherBetter: true},
     {label: 'EFF', key: "EFF", higherBetter: true},
     {label: 'EFF/40', key: "EFF/40", higherBetter: true},
+    {label: 'Offensive_rating', key: "Offensive_rating", higherBetter: true},
+    {label: 'Defensive_rating', key: "Defensive_rating", higherBetter: false},
+    {label: 'USG%', key: "USG%", higherBetter: true},
     {label: 'TS%', key: "TS%", higherBetter: true},
     {label: 'eFG%', key: "eFG%", higherBetter: true},
-    {label: 'USG%', key: "USG%", higherBetter: true},
     {label: '3PAr', key: "3PAr", higherBetter: true},
     {label: 'FTr', key: "FTr", higherBetter: true},
     {label: 'ORB%', key: "ORB%", higherBetter: true},
@@ -1624,63 +1584,55 @@ function changeSeason(playerIndex, season) {
     {label: 'TOV%', key: "TOV%", higherBetter: false}
   ];
 
-let tableHTML = `<table><thead><tr><th>지표</th>`;
+  let tableHTML = `<table><thead><tr><th>지표</th>`;
+  playersData.forEach((p, idx) => {
+    const selectedSeason = p.__season || '23-24';
+    tableHTML += `<th>
+      ${p["Player"]} (${p["Team"]})<br>
+      <select onchange="changeSeason(${idx}, this.value)">
+        <option value="23-24" ${selectedSeason === '23-24' ? 'selected' : ''}>23-24</option>
+        <option value="24-25" ${selectedSeason === '24-25' ? 'selected' : ''}>24-25</option>
+      </select>
+    </th>`;
+  });
+  if (playersData.length === 2) tableHTML += `<th>차이</th>`;
+  tableHTML += `</tr></thead><tbody>`;
 
-playersData.forEach((p, idx) => {
-  const selectedSeason = p.__season || '23-24'; // 기본값
-  tableHTML += `<th>
-    ${p["Player"]} (${p["Team"]})<br>
-    <select onchange="changeSeason(${idx}, this.value)">
-      <option value="23-24" ${selectedSeason === '23-24' ? 'selected' : ''}>23-24</option>
-      <option value="24-25" ${selectedSeason === '24-25' ? 'selected' : ''}>24-25</option>
-    </select>
-  </th>`;
-});
-
-if (playersData.length === 2) tableHTML += `<th>차이</th>`;
   statsLabels.forEach(stat => {
     const values = playersData.map(p => parseFloat(p[stat.key]) || 0);
     const ranks = values.map(val => calculateRank(filteredData, stat.key, val, stat.higherBetter));
 
     let highlightClass = [];
     if (values.length >= 2) {
-      const sortedValues = [...values].sort((a, b) => stat.higherBetter ? b - a : a - b);
+      const sorted = [...values].sort((a, b) => stat.higherBetter ? b - a : a - b);
       highlightClass = values.map(v => {
-        if (v === sortedValues[0]) return 'highlight-first';
-        if (values.length > 2 && v === sortedValues[1]) return 'highlight-second';
+        if (v === sorted[0]) return 'highlight-first';
+        if (values.length > 2 && v === sorted[1]) return 'highlight-second';
         return 'highlight-third';
       });
     }
 
     tableHTML += `<tr data-category="${getCategoryByStat(stat.label)}"><td>${stat.label}</td>`;
-
-    values.forEach((value, idx) => {
-      tableHTML += `<td class="${highlightClass[idx]}">${formatStatValue(stat.key, value)} (${ranks[idx]}위)</td>`;
+    values.forEach((val, idx) => {
+      tableHTML += `<td class="${highlightClass[idx]}">${formatStatValue(stat.key, val)} (${ranks[idx]}위)</td>`;
     });
 
     if (playersData.length === 2) {
       const diff = values[0] - values[1];
+      const format = statsFormats[stat.key] || {unit: '', decimals: 2};
+      let formattedDiff = '';
+      if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
+        const m = Math.floor(Math.abs(diff) / 60);
+        const s = Math.abs(diff) % 60;
+        formattedDiff = `${m}분 ${s}초`;
+      } else {
+        formattedDiff = `${Math.abs(diff).toFixed(format.decimals)}${format.unit}`;
+      }
       const diffClass = diff > 0 ? 'diff-positive' : diff < 0 ? 'diff-negative' : '';
-const format = statsFormats[stat.key] || {unit: '', decimals: 2};
-
-let formattedDiff;
-if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
-  const diffSeconds = Math.abs(diff);
-  const minutes = Math.floor(diffSeconds / 60);
-  const seconds = diffSeconds % 60;
-  formattedDiff = `${minutes}분 ${seconds}초`;
-} else if (format.decimals === 0) {
-  formattedDiff = `${Math.abs(diff)}${format.unit}`;
-} else {
-  formattedDiff = `${Math.abs(diff).toFixed(format.decimals)}${format.unit}`;
-}
-
-
-
       tableHTML += `<td class="diff-cell ${diffClass}"><span>${formattedDiff}</span></td>`;
     }
 
-    tableHTML += '</tr>';
+    tableHTML += `</tr>`;
   });
 
   tableHTML += '</tbody></table>';
@@ -1691,8 +1643,6 @@ if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
   spacer.style.height = '5px';
   document.getElementById('compareResult').appendChild(spacer);
 }
-
-
 
 
 // 엔터키 입력 기능 추가 (유지)
@@ -1909,7 +1859,46 @@ function loadPlayersData2() {
 window.onload = function() {
   loadPlayersData();  // 1페이지
   loadPlayersData2(); // ✅ 2페이지 초기 데이터도 함께 로딩
+  document.getElementById('compareButton').addEventListener('click', comparePlayers);
+
 };
+
+  // ✅ 여기부터 새로 붙여넣기
+function changeSeason(playerIndex, season) {
+  const playerName = document.getElementById(`comparePlayer${playerIndex + 1}`)?.value.trim();
+  if (!playerName) return;
+
+  const fileMap = {
+    '23-24': '23-24_KBL_stats.xlsx',
+    '24-25': '24-25_KBL_stats.xlsx'
+  };
+  const url = `https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`;
+
+  fetch(url)
+    .then(response => response.arrayBuffer())
+    .then(data => {
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const seasonData = XLSX.utils.sheet_to_json(sheet);
+
+      const matchedPlayer = seasonData.find(p =>
+        p["Player"]?.trim().toLowerCase() === playerName.toLowerCase()
+      );
+
+      if (!matchedPlayer) {
+        alert(`${playerName}의 ${season} 시즌 데이터가 없습니다.`);
+        return;
+      }
+
+      matchedPlayer.__season = season;
+      playersData[playerIndex] = matchedPlayer;
+      comparePlayers();  // 다시 렌더링
+    })
+    .catch(err => {
+      console.error("시즌 데이터 로딩 오류:", err);
+      alert("시즌 변경 중 오류 발생");
+    });
+}
 </script>
 
  
