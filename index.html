@@ -1595,11 +1595,78 @@ playersData = [player1, player2, player3]
   console.log("👤 입력된 선수 이름들:", player1, player2, player3);
   console.log("📊 찾은 선수 데이터 객체:", playersData);
   
-if (playersData.some(data => data === undefined)) {
-  alert('선수 이름을 정확히 입력해주세요.');
-  return;
-}  // ← 반드시 여기서 함수 닫기
+  if (playersData.some(data => data === undefined)) {
+    alert('선수 이름을 정확히 입력해주세요.');
+    return;
+  }
 
+  let tableHTML = `<table><thead><tr><th>지표</th>`;
+
+  playersData.forEach((p, idx) => {
+    const selectedSeason = p.__season || '23-24';
+    tableHTML += `<th>${p["Player"]} (${p["Team"]})<br>
+      <select onchange="changeSeason(${idx}, this.value)">
+        <option value="23-24" ${selectedSeason === '23-24' ? 'selected' : ''}>23-24</option>
+        <option value="24-25" ${selectedSeason === '24-25' ? 'selected' : ''}>24-25</option>
+      </select></th>`;
+  });
+
+  if (playersData.length === 2) tableHTML += `<th>차이</th>`;
+
+  statsLabels.forEach(stat => {
+    const values = playersData.map(p => parseFloat(p[stat.key]) || 0);
+    const ranks = values.map(val => calculateRank(filteredData, stat.key, val, stat.higherBetter));
+
+    let highlightClass = [];
+    if (values.length >= 2) {
+      const sortedValues = [...values].sort((a, b) => stat.higherBetter ? b - a : a - b);
+      highlightClass = values.map(v => {
+        if (v === sortedValues[0]) return 'highlight-first';
+        if (values.length > 2 && v === sortedValues[1]) return 'highlight-second';
+        return 'highlight-third';
+      });
+    }
+
+    tableHTML += `<tr data-category="${getCategoryByStat(stat.label)}"><td>${stat.label}</td>`;
+
+    values.forEach((value, idx) => {
+      tableHTML += `<td class="${highlightClass[idx]}">${formatStatValue(stat.key, value)} (${ranks[idx]}위)</td>`;
+    });
+
+    if (playersData.length === 2) {
+      const diff = values[0] - values[1];
+      const diffClass = diff > 0 ? 'diff-positive' : diff < 0 ? 'diff-negative' : '';
+      const format = statsFormats[stat.key] || {unit: '', decimals: 2};
+
+      let formattedDiff;
+      if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
+        const diffSeconds = Math.abs(diff);
+        const minutes = Math.floor(diffSeconds / 60);
+        const seconds = diffSeconds % 60;
+        formattedDiff = `${minutes}분 ${seconds}초`;
+      } else if (format.decimals === 0) {
+        formattedDiff = `${Math.abs(diff)}${format.unit}`;
+      } else {
+        formattedDiff = `${Math.abs(diff).toFixed(format.decimals)}${format.unit}`;
+      }
+
+      tableHTML += `<td class="diff-cell ${diffClass}"><span>${formattedDiff}</span></td>`;
+    }
+
+    tableHTML += '</tr>';
+  });
+
+  tableHTML += '</tbody></table>';
+
+  document.getElementById('compareResult').innerHTML = tableHTML;
+  filterCompareTable();
+
+  const spacer = document.createElement('div');
+  spacer.style.height = '5px';
+  document.getElementById('compareResult').appendChild(spacer);
+}
+
+  
 // ✅ 여기부터 새로 붙여넣기
 function changeSeason(playerIndex, season) {
   const playerName = document.getElementById(`comparePlayer${playerIndex + 1}`)?.value.trim();
@@ -1639,78 +1706,6 @@ function changeSeason(playerIndex, season) {
 
   
   }
-
- 
-
-let tableHTML = `<table><thead><tr><th>지표</th>`;
-
-playersData.forEach((p, idx) => {
-  const selectedSeason = p.__season || '23-24'; // 기본값
-  tableHTML += `<th>
-    ${p["Player"]} (${p["Team"]})<br>
-    <select onchange="changeSeason(${idx}, this.value)">
-      <option value="23-24" ${selectedSeason === '23-24' ? 'selected' : ''}>23-24</option>
-      <option value="24-25" ${selectedSeason === '24-25' ? 'selected' : ''}>24-25</option>
-    </select>
-  </th>`;
-});
-
-if (playersData.length === 2) tableHTML += `<th>차이</th>`;
-  statsLabels.forEach(stat => {
-    const values = playersData.map(p => parseFloat(p[stat.key]) || 0);
-    const ranks = values.map(val => calculateRank(filteredData, stat.key, val, stat.higherBetter));
-
-    let highlightClass = [];
-    if (values.length >= 2) {
-      const sortedValues = [...values].sort((a, b) => stat.higherBetter ? b - a : a - b);
-      highlightClass = values.map(v => {
-        if (v === sortedValues[0]) return 'highlight-first';
-        if (values.length > 2 && v === sortedValues[1]) return 'highlight-second';
-        return 'highlight-third';
-      });
-    }
-
-    tableHTML += `<tr data-category="${getCategoryByStat(stat.label)}"><td>${stat.label}</td>`;
-
-    values.forEach((value, idx) => {
-      tableHTML += `<td class="${highlightClass[idx]}">${formatStatValue(stat.key, value)} (${ranks[idx]}위)</td>`;
-    });
-
-    if (playersData.length === 2) {
-      const diff = values[0] - values[1];
-      const diffClass = diff > 0 ? 'diff-positive' : diff < 0 ? 'diff-negative' : '';
-const format = statsFormats[stat.key] || {unit: '', decimals: 2};
-
-let formattedDiff;
-if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
-  const diffSeconds = Math.abs(diff);
-  const minutes = Math.floor(diffSeconds / 60);
-  const seconds = diffSeconds % 60;
-  formattedDiff = `${minutes}분 ${seconds}초`;
-} else if (format.decimals === 0) {
-  formattedDiff = `${Math.abs(diff)}${format.unit}`;
-} else {
-  formattedDiff = `${Math.abs(diff).toFixed(format.decimals)}${format.unit}`;
-}
-
-
-
-      tableHTML += `<td class="diff-cell ${diffClass}"><span>${formattedDiff}</span></td>`;
-    }
-
-    tableHTML += '</tr>';
-  });
-
-  tableHTML += '</tbody></table>';
-  console.log("📋 테이블 HTML 생성 완료:", tableHTML);
-  document.getElementById('compareResult').innerHTML = tableHTML;
-  filterCompareTable();
-
-  const spacer = document.createElement('div');
-  spacer.style.height = '5px';
-  document.getElementById('compareResult').appendChild(spacer);
-}
-
 
 
 
