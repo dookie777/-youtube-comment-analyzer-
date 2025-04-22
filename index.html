@@ -1701,6 +1701,7 @@ if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
   });
 
   tableHTML += '</tbody></table>';
+  console.log("📋 테이블 HTML 생성 완료:", tableHTML);
   document.getElementById('compareResult').innerHTML = tableHTML;
   filterCompareTable();
 
