@@ -1532,52 +1532,7 @@ playersData = [player1, player2, player3]
   console.log("👤 입력된 선수 이름들:", player1, player2, player3);
   console.log("📊 찾은 선수 데이터 객체:", playersData);
 
-if (playersData.some(data => data === undefined)) {
-  alert('선수 이름을 정확히 입력해주세요.');
-  return;
-}  // ← 반드시 여기서 함수 닫기
-
-// ✅ 여기부터 새로 붙여넣기
-function changeSeason(playerIndex, season) {
-  const playerName = document.getElementById(`comparePlayer${playerIndex + 1}`)?.value.trim();
-  if (!playerName) return;
-
-  const fileMap = {
-    '23-24': '23-24_KBL_stats.xlsx',
-    '24-25': '24-25_KBL_stats.xlsx'
-  };
-  const url = `https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`;
-
-  fetch(url)
-    .then(response => response.arrayBuffer())
-    .then(data => {
-      const workbook = XLSX.read(data, { type: "array" });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const seasonData = XLSX.utils.sheet_to_json(sheet);
-
-      const matchedPlayer = seasonData.find(p =>
-        p["Player"]?.trim().toLowerCase() === playerName.toLowerCase()
-      );
-
-      if (!matchedPlayer) {
-        alert(`${playerName}의 ${season} 시즌 데이터가 없습니다.`);
-        return;
-      }
-
-      matchedPlayer.__season = season;
-      playersData[playerIndex] = matchedPlayer;
-      comparePlayers();  // 다시 렌더링
-    })
-    .catch(err => {
-      console.error("시즌 데이터 로딩 오류:", err);
-      alert("시즌 변경 중 오류 발생");
-    });
-}
-
-  
-  }
-
-  const statsLabels = [
+ const statsLabels = [
     {label: '출전 경기 수', key: "출전 경기 수", higherBetter: true},
     {label: '평균 출전 시간', key: "총 출전 시간(초)", higherBetter: true},
     {label: '득점', key: "득점", higherBetter: true},
@@ -1639,7 +1594,54 @@ function changeSeason(playerIndex, season) {
     {label: 'STL%', key: "STL%", higherBetter: true},
     {label: 'BS%', key: "BS%", higherBetter: true},
     {label: 'TOV%', key: "TOV%", higherBetter: false}
-  ];
+  ];  
+  
+if (playersData.some(data => data === undefined)) {
+  alert('선수 이름을 정확히 입력해주세요.');
+  return;
+}  // ← 반드시 여기서 함수 닫기
+
+// ✅ 여기부터 새로 붙여넣기
+function changeSeason(playerIndex, season) {
+  const playerName = document.getElementById(`comparePlayer${playerIndex + 1}`)?.value.trim();
+  if (!playerName) return;
+
+  const fileMap = {
+    '23-24': '23-24_KBL_stats.xlsx',
+    '24-25': '24-25_KBL_stats.xlsx'
+  };
+  const url = `https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`;
+
+  fetch(url)
+    .then(response => response.arrayBuffer())
+    .then(data => {
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const seasonData = XLSX.utils.sheet_to_json(sheet);
+
+      const matchedPlayer = seasonData.find(p =>
+        p["Player"]?.trim().toLowerCase() === playerName.toLowerCase()
+      );
+
+      if (!matchedPlayer) {
+        alert(`${playerName}의 ${season} 시즌 데이터가 없습니다.`);
+        return;
+      }
+
+      matchedPlayer.__season = season;
+      playersData[playerIndex] = matchedPlayer;
+      comparePlayers();  // 다시 렌더링
+    })
+    .catch(err => {
+      console.error("시즌 데이터 로딩 오류:", err);
+      alert("시즌 변경 중 오류 발생");
+    });
+}
+
+  
+  }
+
+ 
 
 let tableHTML = `<table><thead><tr><th>지표</th>`;
 
