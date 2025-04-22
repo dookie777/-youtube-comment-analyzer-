@@ -1589,31 +1589,33 @@ function formatStatValue(key, value) {
 }
 
 
-function comparePlayers() {
+window.comparePlayers = function() {
+  console.log("✅ comparePlayers() 호출됨");
+  console.log("📦 originalData 상태 확인:", originalData);
+  
   const player1 = document.getElementById('comparePlayer1').value.trim();
   const player2 = document.getElementById('comparePlayer2').value.trim();
   const player3 = document.getElementById('comparePlayer3').value.trim();
   const minGamesChecked = document.getElementById('compareMinGames').checked;
 
-  const names = [player1, player2, player3];
-  playersData = [];
+    if (!player1 && !player2 && !player3) {
+    document.getElementById('compareResult').innerHTML = '';
+    return;
+  }
 
-  names.forEach((name, idx) => {
-    if (!name) return;
-    const selectEl = document.querySelectorAll('.season-switch')[idx];
-    const season = selectEl ? selectEl.value : '23-24';
-    const seasonData = seasonDataMap[season] || [];
+  let filteredData = minGamesChecked
+    ? originalData.filter(cols => parseInt(cols["출전 경기 수"]) >= 14)
+    : originalData;
+  
+playersData = [player1, player2, player3]
+    .filter(name => name !== '')
+    .map(name => filteredData.find(cols => cols["Player"].trim().toLowerCase().includes(name.trim().toLowerCase())));
 
-    const player = seasonData.find(p => p["Player"]?.trim().toLowerCase() === name.toLowerCase());
-    if (!player) return;
-    if (minGamesChecked && parseInt(player["출전 경기 수"]) < 14) return;
-
-    player.__season = season;
-    playersData.push(player);
-  });
-
-  if (playersData.length === 0) {
-    alert("선수를 찾을 수 없습니다.");
+  console.log("👤 입력된 선수 이름들:", player1, player2, player3);
+  console.log("📊 찾은 선수 데이터 객체:", playersData);
+  
+  if (playersData.some(data => data === undefined)) {
+    alert('선수 이름을 정확히 입력해주세요.');
     return;
   }
 
@@ -1621,22 +1623,22 @@ function comparePlayers() {
 
   playersData.forEach((p, idx) => {
     const selectedSeason = p.__season || '23-24';
-    tableHTML += `<th>
-      <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-        <span style="font-weight: bold; color: #FFF;">${p["Player"]} (${p["Team"]})</span>
-        <select class="season-switch" onchange="changeSeason(${idx}, this.value)">
-          <option value="23-24" ${selectedSeason === '23-24' ? 'selected' : ''}>23-24</option>
-          <option value="24-25" ${selectedSeason === '24-25' ? 'selected' : ''}>24-25</option>
-        </select>
-      </div>
-    </th>`;
+tableHTML += `<th>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+    <span style="font-weight: bold; color: #FFF;">${p["Player"]} (${p["Team"]})</span>
+    <select class="season-switch" onchange="changeSeason(${idx}, this.value)">
+      <option value="23-24" ${selectedSeason === '23-24' ? 'selected' : ''}>23-24</option>
+      <option value="24-25" ${selectedSeason === '24-25' ? 'selected' : ''}>24-25</option>
+    </select>
+  </div>
+</th>`;
   });
 
   if (playersData.length === 2) tableHTML += `<th>차이</th>`;
 
   statsLabels.forEach(stat => {
     const values = playersData.map(p => parseFloat(p[stat.key]) || 0);
-    const ranks = values.map(val => calculateRank(originalData, stat.key, val, stat.higherBetter));
+    const ranks = values.map(val => calculateRank(filteredData, stat.key, val, stat.higherBetter));
 
     let highlightClass = [];
     if (values.length >= 2) {
@@ -1687,18 +1689,9 @@ function comparePlayers() {
   document.getElementById('compareResult').appendChild(spacer);
 }
 
-window.comparePlayers = comparePlayers;
-
-
-let seasonDataMap = {};        // 🔹 시즌별 전체 데이터 캐싱용
-let originalData = [];         // 🔹 현재 화면에서 사용하는 데이터
-let playersData = [];          // 🔹 비교 대상 선수 데이터 배열
   
 // ✅ 여기부터 새로 붙여넣기
 function changeSeason(playerIndex, season) {
-  const playerName = document.getElementById(`comparePlayer${playerIndex + 1}`)?.value.trim();
-  if (!playerName) return;
-
   const fileMap = {
     '23-24': '23-24_KBL_stats.xlsx',
     '24-25': '24-25_KBL_stats.xlsx'
@@ -1719,30 +1712,34 @@ function changeSeason(playerIndex, season) {
         cols["총 출전 시간(초)"] = m * 60 + s;
       });
 
-      // ✅ 시즌 데이터 저장
-    seasonDataMap[season] = seasonData;
-    originalData = seasonData;
-      // ✅ 해당 선수만 반영
-      const matchedPlayer = seasonData.find(p =>
-        p["Player"]?.trim().toLowerCase() === playerName.toLowerCase()
-      );
+      // 🔁 전체 데이터 교체
+      originalData = seasonData;
 
-      if (!matchedPlayer) {
-        alert(`${playerName}의 ${season} 시즌 데이터가 없습니다.`);
-        return;
-      }
+      const minGamesChecked = document.getElementById('compareMinGames').checked;
 
-      matchedPlayer.__season = season;
-      playersData[playerIndex] = matchedPlayer;
+      // 🔁 전체 선수 입력값 기준으로 다시 찾기
+      playersData = [1, 2, 3].map(i => {
+        const input = document.getElementById(`comparePlayer${i}`);
+        if (!input) return null;
 
-      comparePlayers(); // 재렌더링
+        const name = input.value.trim().toLowerCase();
+        if (!name) return null;
+
+        const player = seasonData.find(p => p["Player"]?.trim().toLowerCase() === name);
+        if (!player) return null;
+        if (minGamesChecked && parseInt(player["출전 경기 수"]) < 14) return null;
+
+        player.__season = season;
+        return player;
+      }).filter(Boolean);
+
+      comparePlayers();
     })
     .catch(err => {
       console.error("시즌 데이터 로딩 오류:", err);
       alert("시즌 변경 중 오류 발생");
     });
 }
-
 
 
 
