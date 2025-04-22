@@ -1529,6 +1529,9 @@ playersData = [player1, player2, player3]
     .filter(name => name !== '')
     .map(name => filteredData.find(cols => cols["Player"].trim().toLowerCase().includes(name.trim().toLowerCase())));
 
+  console.log("👤 입력된 선수 이름들:", player1, player2, player3);
+  console.log("📊 찾은 선수 데이터 객체:", playersData);
+
 if (playersData.some(data => data === undefined)) {
   alert('선수 이름을 정확히 입력해주세요.');
   return;
