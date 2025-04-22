@@ -1151,11 +1151,15 @@ try {
   const firstSheet = workbook.SheetNames[0];
   originalData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
 
-  originalData.forEach(cols => {
-    let minutes = parseInt(cols["m"]) || 0;
-    let seconds = parseInt(cols["s"]) || 0;
-    cols["총 출전 시간(초)"] = minutes * 60 + seconds;
-  });
+originalData.forEach(cols => {
+  let minutes = parseInt(cols["m"]) || 0;
+  let seconds = parseInt(cols["s"]) || 0;
+  cols["총 출전 시간(초)"] = minutes * 60 + seconds;
+
+  // ✅ 이름, 팀명 공백 제거
+  cols["Player"] = (cols["Player"] || "").trim();
+  cols["Team"] = (cols["Team"] || "").trim();
+});
 
   renderTable(originalData);
 } catch (error) {
@@ -1322,9 +1326,12 @@ function calculateRank(filteredData, statKey, playerValue, isHigherBetter = true
 function showPlayerStats() {
   const season = document.getElementById('seasonSelectorPlayer')?.value || '23-24';
   const playerNameInput = document.getElementById('searchPlayer').value.trim();
-
   const minGamesChecked = document.getElementById('minGames').checked;
 
+  const filteredData = minGamesChecked
+    ? originalData.filter(cols => parseInt(cols["출전 경기 수"]) >= 14)
+    : originalData;
+  
   const playerData = filteredData.find(cols => 
     cols["Player"].trim().toLowerCase().includes(playerNameInput.toLowerCase())
   );
@@ -2029,11 +2036,15 @@ function loadPlayersData2() {
       const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
 
       // ✅ 시간 변환 보장
-      jsonData.forEach(cols => {
-        const minutes = parseInt(cols["m"]) || 0;
-        const seconds = parseInt(cols["s"]) || 0;
-        cols["총 출전 시간(초)"] = minutes * 60 + seconds;
-      });
+jsonData.forEach(cols => {
+  const minutes = parseInt(cols["m"]) || 0;
+  const seconds = parseInt(cols["s"]) || 0;
+  cols["총 출전 시간(초)"] = minutes * 60 + seconds;
+
+  // ✅ 이름/팀명 공백 제거 (중복/디자인 오류 방지)
+  cols["Player"] = (cols["Player"] || "").trim();
+  cols["Team"] = (cols["Team"] || "").trim();
+});
 
       // ✅ 데이터 갱신 필수
       originalData = jsonData;
