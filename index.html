@@ -1064,6 +1064,7 @@ tabs.forEach(tab => {
   };
 });
  let playerDataBySeason = {};  // ✅ 이 줄을 추가
+ let fullSeasonDataMap = {};  // ✅ 시즌별 전체 데이터 저장용
  let originalData = [], highlightedPlayer = '', fixedRow = null;
   let playersData = [];
   let playerSeasonData = {}; // 선수별 시즌 데이터 저장용
@@ -1167,10 +1168,6 @@ originalData.forEach(cols => {
   alert(`데이터 로딩 실패: ${error.message}`);
 }
 
-
-
-
-
 function renderTable(data) {
   const tableBody = document.getElementById('tableBody');
   tableBody.innerHTML = '';
@@ -1192,13 +1189,13 @@ row.innerHTML = `
   <td>${cols["Team"]}</td>
   <td>${formatStatValue("출전 경기 수", cols["출전 경기 수"])}</td>
   <td data-time="${totalSeconds}">${formatStatValue("총 출전 시간(초)", totalSeconds)}</td>
-  <td>${formatStatValue("득점", cols["득점"])}</td>
-  <td>${formatStatValue("평균 득점", cols["평균 득점"])}</td>
+  <td>${withRank("득점", cols["득점"], filteredData, true)}</td>
+  <td>${withRank("평균 득점", cols["평균 득점"], filteredData, true)}</td>
   <td>${formatStatValue("FGA", cols["FGA"])}</td>
   <td>${formatStatValue("FG", cols["FG"])}</td>
   <td>${formatStatValue("평균 FG 시도", cols["평균 FG 시도"])}</td>
   <td>${formatStatValue("평균 FG 성공", cols["평균 FG 성공"])}</td>
-  <td>${formatStatValue("FG%", cols["FG%"])}</td>
+  <td>${withRank("FG%", cols["FG%"], filteredData, true)}</td>
   <td>${formatStatValue("2PA", cols["2PA"])}</td>
   <td>${formatStatValue("2P", cols["2P"])}</td>
   <td>${formatStatValue("평균 2p 시도", cols["평균 2p 시도"])}</td>
@@ -1230,7 +1227,7 @@ row.innerHTML = `
   <td>${formatStatValue("평균 턴오버", cols["평균 턴오버"])}</td>
   <td>${formatStatValue("파울", cols["파울"])}</td>
   <td>${formatStatValue("평균 파울", cols["평균 파울"])}</td>
-  <td>${formatStatValue("WS", cols["WS"])}</td>
+  <td>${withRank("WS", cols["WS"], filteredData, true)}</td>
   <td>${formatStatValue("WS/40", cols["WS/40"])}</td>
   <td>${formatStatValue("Offensive_WS", cols["Offensive_WS"])}</td>
   <td>${formatStatValue("Defensive_WS", cols["Defensive_WS"])}</td>
@@ -1314,15 +1311,23 @@ function clearFixedRow() {
    renderTable(originalData);
  });
 
-function calculateRank(filteredData, statKey, playerValue, isHigherBetter = true) {
-  const sorted = filteredData
+function calculateRank(data, statKey, playerValue, isHigherBetter = true) {
+  const validValues = data
     .map(cols => parseFloat(cols[statKey]))
-    .filter(value => !isNaN(value))
-    .sort((a, b) => isHigherBetter ? b - a : a - b);
+    .filter(value => !isNaN(value));
 
-  return sorted.indexOf(parseFloat(playerValue)) + 1;
+  if (validValues.length === 0 || isNaN(parseFloat(playerValue))) {
+    return '-'; // 데이터 없거나 값이 NaN일 경우
+  }
+
+  const sorted = [...validValues].sort((a, b) => isHigherBetter ? b - a : a - b);
+  const rank = sorted.indexOf(parseFloat(playerValue)) + 1;
+  return rank || '-';
 }
-
+function withRank(label, value, data, isHigherBetter = true) {
+  const rank = calculateRank(data, label, value, isHigherBetter);
+  return `${formatStatValue(label, value)} (${rank}위)`;
+}
 function showPlayerStats() {
   const season = document.getElementById('seasonSelectorPlayer')?.value || '23-24';
   const playerNameInput = document.getElementById('searchPlayer').value.trim();
@@ -1598,6 +1603,12 @@ function formatStatValue(key, value) {
 
 
 window.comparePlayers = function() {
+  // ✅ 탭 자동 전환 추가
+  tabs.forEach(t => t.classList.remove('active'));
+  contents.forEach(c => c.classList.remove('active'));
+  document.querySelector('[data-tab="tab-compare"]').classList.add('active');
+  document.getElementById('tab-compare').classList.add('active');
+  
   console.log("✅ comparePlayers() 호출됨");
   console.log("📦 originalData 상태 확인:", originalData);
   
@@ -1657,8 +1668,11 @@ setTimeout(() => {
 
   statsLabels.forEach(stat => {
     const values = playersData.map(p => parseFloat(p[stat.key]) || 0);
-    const ranks = values.map(val => calculateRank(filteredData, stat.key, val, stat.higherBetter));
-
+    const ranks = values.map((val, idx) => {
+      const player = playersData[idx]; // ✅ 변수명 정확히 교체
+      const seasonData = fullSeasonDataMap[player.__season] || [];
+      return calculateRank(seasonData, stat.key, val, stat.higherBetter);
+    });
     let highlightClass = [];
     if (values.length >= 2) {
       const sortedValues = [...values].sort((a, b) => stat.higherBetter ? b - a : a - b);
@@ -1733,8 +1747,11 @@ function comparePlayersFromCache() {
 
   statsLabels.forEach(stat => {
     const values = players.map(p => parseFloat(p[stat.key]) || 0);
-    const ranks = values.map(val => calculateRank(players, stat.key, val, stat.higherBetter));
-
+    const ranks = values.map((val, idx) => {
+      const player = playersData[idx]; // ✅ 변수명 정확히 교체
+      const seasonData = fullSeasonDataMap[player.__season] || [];
+      return calculateRank(seasonData, stat.key, val, stat.higherBetter);
+    });
     let highlightClass = [];
     if (values.length >= 2) {
       const sortedValues = [...values].sort((a, b) => stat.higherBetter ? b - a : a - b);
@@ -1812,43 +1829,55 @@ window.changeSeason = function(playerIndex, season) {
         const m = parseInt(cols["m"]) || 0;
         const s = parseInt(cols["s"]) || 0;
         cols["총 출전 시간(초)"] = m * 60 + s;
+        cols["Player"] = (cols["Player"] || "").trim();
+        cols["Team"] = (cols["Team"] || "").trim();
       });
 
-      // 선수 이름 가져오기
-      const input = document.getElementById(`comparePlayer${playerIndex + 1}`);
-      if (!input) return;
+      // 캐시에 저장
+      fullSeasonDataMap[season] = seasonData;
 
-      const name = input.value.trim().toLowerCase();
-      const matchedPlayer = seasonData.find(p => p["Player"]?.trim().toLowerCase() === name);
+      // ✅ 3명 input 값 다시 읽기
+      const names = [
+        document.getElementById('comparePlayer1').value.trim().toLowerCase(),
+        document.getElementById('comparePlayer2').value.trim().toLowerCase(),
+        document.getElementById('comparePlayer3').value.trim().toLowerCase()
+      ];
 
-      if (!matchedPlayer) {
-        alert("선수를 찾을 수 없습니다.");
-        return;
+      // ✅ 각 시즌 드롭다운 값 읽기
+      const seasons = [
+        document.getElementById('seasonSwitch-0')?.value || '23-24',
+        document.getElementById('seasonSwitch-1')?.value || '23-24',
+        document.getElementById('seasonSwitch-2')?.value || '23-24'
+      ];
+
+      // ✅ 3명 모두 다시 찾아서 playerSeasonData에 저장
+      playerSeasonData = {};
+
+      for (let i = 0; i < names.length; i++) {
+        if (!names[i]) continue;
+
+        const sData = fullSeasonDataMap[seasons[i]] || [];
+        const matched = sData.find(p =>
+          p["Player"]?.trim().toLowerCase().includes(names[i])
+        );
+
+        if (matched) {
+          matched.__season = seasons[i];
+          playerSeasonData[i] = matched;
+        }
       }
 
-      matchedPlayer.__season = season;
-
-      // ✅ 해당 선수만 따로 저장
-      playerSeasonData[playerIndex] = matchedPlayer;
-
-      // ✅ 새 비교 테이블 다시 그림
-      comparePlayersFromCache();
-    })
+      // ✅ 비교 테이블 다시 생성
+setTimeout(() => {
+  comparePlayersFromCache();
+}, 50);    })
     .catch(err => {
       console.error("시즌 데이터 로딩 오류:", err);
       alert("시즌 변경 중 오류 발생");
     });
 };
-
-
-
-
-
-
   
   }
-
-
 
 // 엔터키 입력 기능 추가 (유지)
 ['comparePlayer1', 'comparePlayer2', 'comparePlayer3'].forEach(id => {
@@ -2066,10 +2095,10 @@ jsonData.forEach(cols => {
 
 
 window.onload = function() {
+  document.getElementById('minGamesCheckbox').checked = false; // ← 초기 체크 해제
   loadPlayersData();  // 1페이지
-  loadPlayersData2(); // ✅ 2페이지 초기 데이터도 함께 로딩
+  loadPlayersData2(); // 2페이지
   document.getElementById('compareResult').innerHTML = '';
-
 };
 </script>
 
