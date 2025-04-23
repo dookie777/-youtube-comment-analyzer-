@@ -637,32 +637,6 @@ h2 {
   background: #121212;
 }
 
-.player-type-filter {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: -10px 0 10px;
-}
-
-.player-type-filter .filter-btn {
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  background-color: #282828;
-  color: #FFF;
-  transition: background-color 0.2s ease;
-}
-
-.player-type-filter .filter-btn.active {
-  background-color: #88c2dd;
-  color: #000;
-}
-    
-
-    
 #statsTable thead th:first-child {
   position: sticky;
   top: 0;
@@ -884,12 +858,7 @@ h2 {
     <input type="checkbox" id="minGamesCheckbox">
     <label for="minGamesCheckbox">규정 경기 이상(14G)</label>
   </div>
-  <div class="player-type-filter">
-    <button class="filter-btn active" data-type="국내">국내</button>
-    <button class="filter-btn active" data-type="외인">외국인</button>
-    <button class="filter-btn active" data-type="아시아쿼터">아시아쿼터</button>
-  </div>
-  
+
 <div class="upload-box" style="position:fixed; top:10px; right:10px; display:flex; align-items:center; gap:5px;">
   <input type="file" id="fileUploader" accept=".xlsx, .xls" style="font-size:0.75rem; color:#FFF;">
   <button onclick="loadLocalFile()" style="background:#555; color:#FFF; padding:4px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer; border:none;">업로드</button>
@@ -1111,8 +1080,6 @@ tabs.forEach(tab => {
   let originalData = [], highlightedPlayer = '', fixedRow = null;
   let playersData = [];
   let playerSeasonData = {}; // 선수별 시즌 데이터 저장용
-  let activeTypes = new Set(['국내', '외인', '아시아쿼터']);
-
 
  const statsLabels = [
     {label: '출전 경기 수', key: "출전 경기 수", higherBetter: true},
@@ -1221,12 +1188,10 @@ function renderTable(data) {
   const tableBody = document.getElementById('tableBody');
   tableBody.innerHTML = '';
 
-  // ✅ 필터 버튼 상태에 따른 선수 구분 필터링
-const minGamesOnly = document.getElementById('minGamesCheckbox').checked;
-const filteredData = (minGamesOnly ? data.filter(cols => parseInt(cols["출전 경기 수"]) >= 14) : data)
-  .filter(cols => activeTypes.has(cols["구분"])); // 필터 최종 적용
-  
-filteredData.forEach(cols => {
+  const minGamesOnly = document.getElementById('minGamesCheckbox').checked;
+  const filteredData = minGamesOnly ? data.filter(cols => parseInt(cols["출전 경기 수"]) >= 14) : data;
+
+  filteredData.forEach(cols => {
     const playerName = cols["Player"];
     const status = parseInt(cols["출전 경기 수"]) >= 14 ? '✅' : '⚠️';
     const totalSeconds = cols["총 출전 시간(초)"]; // 이미 계산된 값 정확히 사용
@@ -2164,40 +2129,6 @@ document.addEventListener("DOMContentLoaded", function () {
   loadPlayersData();
   loadPlayersData2();
   document.getElementById('compareResult').innerHTML = '';
-  // ✅ 필터 상태 복원 코드 여기 추가
-  const savedTypes = localStorage.getItem('activeTypes');
-  if (savedTypes) {
-    activeTypes = new Set(JSON.parse(savedTypes));
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  const type = btn.dataset.type;
-
-  // 상태 복원 적용
-  if (activeTypes.has(type)) {
-    btn.classList.add('active');
-  } else {
-    btn.classList.remove('active');
-  }
-
-  // 클릭 이벤트 연결
-  btn.addEventListener('click', () => {
-    if (activeTypes.has(type)) {
-      activeTypes.delete(type);
-      btn.classList.remove('active');
-    } else {
-      activeTypes.add(type);
-      btn.classList.add('active');
-    }
-    localStorage.setItem('activeTypes', JSON.stringify(Array.from(activeTypes)));
-    renderTable(originalData);
-  });
-});
-
-  // ✅ 필터 상태 저장
-  localStorage.setItem('activeTypes', JSON.stringify(Array.from(activeTypes)));
-
-  renderTable(originalData); // 필터 적용
-});
-  });   // ← ✅ 이 닫는 중괄호도 필요합니다!  
 });
 </script>
 
