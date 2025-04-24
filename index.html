@@ -922,6 +922,42 @@ h2 {
   background-color: #FFA500;
   color: #000;
 }
+
+
+#tab-compare .filter-box-inline {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  margin: 12px 0 20px 0;
+  padding-left: 0px;
+  padding-bottom: 10px;
+  width: fit-content;
+  box-sizing: border-box;
+  transform: translateX(133px); /* ✅ Player 열과 정확히 같은 위치로 이동 */
+}
+    
+#tab-compare .filter-box-inline .filter-btn {
+  padding: 0 12px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #888;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#tab-compare .filter-box-inline .filter-btn.active {
+  background-color: #FFA500;
+  color: #000;
+  border-color: #FFA500;
+}
+
+
     
   </style>
 </head>
@@ -1097,6 +1133,12 @@ h2 {
     <label><input type="checkbox" value="2차 슈팅 지표" checked> 2차 슈팅 지표</label>
     <label><input type="checkbox" value="Team내 비중 지표" checked> Team내 비중 지표</label>
   </div>
+<div class="filter-box-inline" id="compareFilterBox"
+     style="display: flex; gap: 10px; justify-content: flex-start; margin: 10px 0 0 0; padding-left: 10px;">
+  <button class="filter-btn active" data-type="국내">국내 선수</button>
+  <button class="filter-btn active" data-type="외국인">외국인 선수</button>
+  <button class="filter-btn active" data-type="아시아쿼터">아시아쿼터</button>
+</div>
   <div class="compare-result" id="compareResult"></div>
 </div>
 </div>
@@ -2268,10 +2310,35 @@ document.addEventListener("DOMContentLoaded", function () {
   loadPlayersData2();
   document.getElementById('compareResult').innerHTML = '';
 
-  // ✅ 2페이지용 필터 버튼 이벤트 연결 (playerFilterBox 기준)
+  // ✅ compareFilterBox 버튼 클릭 이벤트 연결
+(function () {
+  const compareFilterBox = document.querySelectorAll('#compareFilterBox .filter-btn');
+  const savedCompareTypes = localStorage.getItem('activeTypesCompare');
+  if (savedCompareTypes) {
+    activeTypes = new Set(JSON.parse(savedCompareTypes));
+    compareFilterBox.forEach(btn => {
+      if (!activeTypes.has(btn.dataset.type)) {
+        btn.classList.remove('active');
+      }
+    });
+  }
 
+  compareFilterBox.forEach(btn => {
+    const type = btn.dataset.type;
+    btn.addEventListener('click', () => {
+      if (activeTypes.has(type)) {
+        activeTypes.delete(type);
+        btn.classList.remove('active');
+      } else {
+        activeTypes.add(type);
+        btn.classList.add('active');
+      }
+      localStorage.setItem('activeTypesCompare', JSON.stringify([...activeTypes]));
+    });
+  });
+})();
 
-  // ✅ 여기에 필터 버튼 이벤트 연결 코드 삽입
+   // ✅ 여기에 필터 버튼 이벤트 연결 코드 삽입
 document.querySelectorAll('.filter-toggle').forEach(btn => {
   const type = btn.dataset.type;
 
