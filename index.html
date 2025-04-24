@@ -215,7 +215,7 @@ thead th {
 .card {
   background-color: rgba(255,255,255,0.05);
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 0px;
   text-align: center;
   min-height: 350px;
 }
@@ -357,6 +357,7 @@ thead th {
 #tab-player .stats-container {
   margin-top: 10px !important;
   padding-bottom: 0px !important; /* ✅ 푸터와 겹침 방지 여백 추가 */
+  padding-right: 15px !important; /* ✅ 오른쪽 스크롤바와 간격 확보 */
   max-height: calc(100vh - 240px);
   overflow-y: auto;
 }
@@ -1290,8 +1291,9 @@ originalData.forEach(cols => {
   cols["Team"] = (cols["Team"] || "").trim();
   cols["구분"] = (cols["구분"] || "").trim(); // ← 이거만 해주시면 됩니다
 });
+fullSeasonDataMap[season] = originalData;  // ✅ 꼭 추가하세요
 
-  renderTable(originalData);
+renderTable(originalData);
 
   
   
@@ -1481,6 +1483,7 @@ const filteredData = data.filter(cols => {
   if (playerData) {
     document.getElementById('playerName').innerText = playerData["Player"];
     document.getElementById('teamName').innerText = '(' + playerData["Team"] + ')';
+    
 
     const statsContainer = document.getElementById('statsContainer');
     statsContainer.innerHTML = '';
