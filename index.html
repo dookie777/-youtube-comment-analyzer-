@@ -956,8 +956,8 @@ h2 {
   border-color: #FFA500;
 }
 
-#playerFilterBox,
-#statsContainer {
+#tab-player #playerFilterBox,
+#tab-player #statsContainer {
   display: none;
 }
 #tab-player .player-title {
@@ -990,7 +990,9 @@ h2 {
   color: #000;
   border-color: #FFA500;
 }
-
+#tab-player-compare .input-box {
+  display: flex !important;
+}    
 #tab-player-compare .category-checkboxes {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -1402,7 +1404,6 @@ const statsFormats = {
  
 tabs.forEach(tab => {
   tab.onclick = (e) => {
-    // 자동 실행으로 트리거된 클릭은 무시
     if (e.isTrusted === false || e.detail === 0) return;
 
     tabs.forEach(t => t.classList.remove('active'));
@@ -1412,10 +1413,16 @@ tabs.forEach(tab => {
       document.getElementById('compareResult').innerHTML = '';
     }
 
+    if (tab.dataset.tab === 'tab-player-compare') {
+      document.getElementById('compareSearchPlayer').value = '';
+      document.getElementById('compareStatResults').innerHTML = '';
+    }
+
     document.getElementById(tab.dataset.tab).classList.add('active');
     tab.classList.add('active');
   };
 });
+
  let playerDataBySeason = {};  // ✅ 이 줄을 추가
   let fullSeasonDataMap = {};  // ← ✅ 반드시 여기 위치해도 됨
   let originalData = [], highlightedPlayer = '', fixedRow = null;
@@ -2507,6 +2514,9 @@ document.addEventListener("DOMContentLoaded", function () {
   loadPlayersData();
   loadPlayersData2();
   document.getElementById('compareResult').innerHTML = '';
+  document.querySelector('[data-tab="tab-player-compare"]').click();
+  document.getElementById('tab-player-compare').classList.add('active');
+
 
   // ✅ compareFilterBox 버튼 클릭 이벤트 연결
 (function () {
