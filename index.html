@@ -306,18 +306,21 @@ thead th {
 }
     
 .highlight-first {
-  background-color: rgba(255,140,0,0.95) !important;
-  color: #FFF !important;
+  background-color: #FFD3C4 !important;  /* 1등: 밝은 살구빛 빨강 */
+  color: #000 !important;
+  font-weight: bold;
 }
 
 .highlight-second {
-  background-color: rgba(70,150,200,0.95) !important;
-  color: #FFF !important;
+  background-color: #D7F2FF !important;  /* 2등: 밝은 하늘색 */
+  color: #000 !important;
+  font-weight: bold;
 }
 
 .highlight-third {
-  background-color: rgba(160,160,160,0.95) !important;
-  color: #FFF !important;
+  background-color: #F0F0F0 !important;  /* 3등: 밝은 회색 */
+  color: #000 !important;
+  font-weight: bold;
 }
 
 .footer {
@@ -355,7 +358,7 @@ thead th {
 }
 
 #tab-player .stats-container {
-  margin-top: 10px !important;
+  margin-top: -25px !important;
   padding-bottom: 0px !important; /* ✅ 푸터와 겹침 방지 여백 추가 */
   padding-right: 15px !important; /* ✅ 오른쪽 스크롤바와 간격 확보 */
   max-height: calc(100vh - 240px);
@@ -367,32 +370,38 @@ thead th {
   display: block;
   height: 0px;
 }
-#tab-player .filter-box-inline {
-  margin-top: 0px !important;        /* 팀명 아래 여백 최소화 */
-  margin-bottom: 40px !important;    /* 카드 위 여백 충분히 확보 */
+#tab-player #filterContainer {
+  width: 100%;
+  display: flex;
   justify-content: flex-start;
-  padding-left: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 0 15px 0;
+}
+
+#tab-player .filter-box-inline {
+  display: flex;
+  gap: 10px;
+  padding-left: 0;
+  margin: 0;
 }
 
 #tab-player .filter-box-inline .filter-btn {
-  padding: 0 12px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #222;
-  color: #fff;
-  border: 1px solid #888;
-  border-radius: 5px;
-  font-size: 0.7rem;
-  font-weight: bold;
+  padding: 6px 12px;
+  border: 1px solid #FFA500;
+  background-color: #333;     /* 어두운 회색 */
+  color: #FFF;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
 }
+
 #tab-player .filter-box-inline .filter-btn.active {
   background-color: #FFA500;
   color: #000;
-  border-color: #FFA500;
 }
+
 
 
 /* ✅ 선수 비교 페이지 입력창 크기 및 영역 최적화 (중요 수정) */
@@ -698,9 +707,7 @@ h2 {
   text-align: center;
 }
 
-
-
-    
+   
 /* 테이블 셀 외곽선 정리 (모든 셀 동일 선 색) */
 #tab-compare .compare-result th,
 #tab-compare .compare-result td {
@@ -900,19 +907,13 @@ h2 {
   font-weight: bold;
   border-color: #FFA500;
 }
-    
-.filter-box-inline {
-  position: sticky;
-  top: 174px; /* ← 이 값만 수정 */
-  z-index: 10;
-  background-color: #000;
-}
+
 
 .filter-box-inline .filter-btn {
   padding: 6px 12px;
   border: 1px solid #FFA500;
-  background-color: #000;
-  color: #FFA500;
+  background-color: #333;     /* 어두운 회색 */
+  color: #FFF;
   border-radius: 4px;
   cursor: pointer;
   font-size: 13px;
@@ -957,8 +958,40 @@ h2 {
   border-color: #FFA500;
 }
 
+#playerFilterBox,
+#statsContainer {
+  display: none;
+}
+#tab-player .player-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 15px 0 10px 0; /* 아래 여백 조절 */
+}
 
-    
+#tab-player .filter-box-inline {
+  position: relative !important;
+  margin-bottom: 25px !important;
+  justify-content: center;
+  padding-left: 0 !important;
+}
+
+.filter-box-inline .filter-btn {
+  padding: 6px 12px;
+  border: 1px solid #888;
+  background-color: #222;
+  color: #FFF;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.filter-box-inline .filter-btn.active {
+  background-color: #FFA500;
+  color: #000;
+  border-color: #FFA500;
+}    
   </style>
 </head>
 <body>
@@ -985,8 +1018,9 @@ h2 {
 
   <div class="input-box">
   <select id="seasonSelector" onchange="loadPlayersData()">
+  <option value="22-23">22-23 시즌</option> <!-- ✅ 추가 -->
   <option value="23-24">23-24 시즌</option>
-  <option value="24-25">24-25 시즌</option>
+  <option value="24-25" selected>24-25 시즌</option> <!-- 이 줄만 수정 -->
   </select>
     <input type="text" id="searchPlayerAll" placeholder="Search player...">
     <button onclick="searchPlayer()">Search</button>
@@ -1084,8 +1118,9 @@ h2 {
 <div id="tab-player" class="tab-content">
   <div class="input-box">
     <select id="seasonSelectorPlayer" onchange="loadPlayersData2()">
+      <option value="22-23">22-23 시즌</option> <!-- ✅ 추가 -->
       <option value="23-24">23-24 시즌</option>
-      <option value="24-25">24-25 시즌</option>
+      <option value="24-25" selected>24-25 시즌</option> <!-- 이 줄도 수정 -->
     </select>
     <input type="text" id="searchPlayer" placeholder="Search player...">
     <button id="searchPlayerButton">Search</button>
@@ -1094,19 +1129,18 @@ h2 {
   </div>
 
   <!-- 선수명/팀명 -->
-  <div class="player-name" id="playerName"></div>
-  <div class="team-name" id="teamName"></div>
-
+    <div class="player-title" id="playerTitle"></div>
   <!-- ✅ 필터 버튼: 카드 상단 좌측 정렬 -->
-  <div class="filter-box-inline" id="playerFilterBox"
-       style="display: flex; gap: 10px; justify-content: flex-start; margin: 10px 0 0 0; padding-left: 10px;">
-    <button class="filter-btn active" data-type="국내">국내 선수</button>
-    <button class="filter-btn active" data-type="외국인">외국인 선수</button>
-    <button class="filter-btn active" data-type="아시아쿼터">아시아쿼터</button>
-  </div>
+    <div id="filterContainer">
+      <div class="filter-box-inline" id="playerFilterBox" style="display: none;">
+        <button class="filter-btn active" data-type="국내">국내 선수</button>
+        <button class="filter-btn active" data-type="외국인">외국인 선수</button>
+        <button class="filter-btn active" data-type="아시아쿼터">아시아쿼터</button>
+      </div>
+    </div>
 
   <!-- 결과 카드 -->
-  <div class="stats-container" id="statsContainer" style="margin-top: 15px;"></div>
+  <div class="stats-container" id="statsContainer"></div>
   <div style="height: 80px;"></div>
 </div>
 
@@ -1305,8 +1339,9 @@ tabs.forEach(tab => {
 window.renderTable = renderTable; // ✅ 여기에 이 줄 추가
   
 async function loadPlayersData() {
-  const season = document.getElementById('seasonSelector')?.value || '23-24';
+  const season = document.getElementById('seasonSelector')?.value || '24-25'; // ← 이 부분도 수정
   const fileMap = {
+    '22-23': '22-23_KBL_stats.xlsx', // ✅ 추가
     '23-24': '23-24_KBL_stats.xlsx',
     '24-25': '24-25_KBL_stats.xlsx'
   };
@@ -1507,7 +1542,7 @@ function calculateRank(data, statKey, playerValue, isHigherBetter = true) {
 }
 
 function showPlayerStats() {
-const season = document.getElementById('seasonSelectorPlayer')?.value || '23-24';
+const season = seasonSelector ? seasonSelector.value : '24-25'; // ← '23-24' → '24-25'
 const playerNameInput = document.getElementById('searchPlayer').value.trim();
 const minGamesChecked = document.getElementById('minGames').checked;
 
@@ -1523,8 +1558,9 @@ const filteredData = data.filter(cols => {
   );
 
   if (playerData) {
-    document.getElementById('playerName').innerText = playerData["Player"];
-    document.getElementById('teamName').innerText = '(' + playerData["Team"] + ')';
+    document.getElementById('playerTitle').innerText = `${playerData["Player"]} (${playerData["Team"]})`;
+    document.getElementById('playerFilterBox').style.display = 'flex';
+    document.getElementById('statsContainer').style.display = 'grid';
     
 
     const statsContainer = document.getElementById('statsContainer');
@@ -1790,31 +1826,34 @@ window.comparePlayers = function () {
   document.querySelector('[data-tab="tab-compare"]').classList.add('active');
   document.getElementById('tab-compare').classList.add('active');
 
-  const season = document.getElementById('seasonSelectorPlayer')?.value || '23-24';
-  const player1 = document.getElementById('comparePlayer1').value.trim();
-  const player2 = document.getElementById('comparePlayer2').value.trim();
-  const player3 = document.getElementById('comparePlayer3').value.trim();
-  const minGamesChecked = document.getElementById('compareMinGames').checked;
+const player1 = document.getElementById('comparePlayer1').value.trim();
+const player2 = document.getElementById('comparePlayer2').value.trim();
+const player3 = document.getElementById('comparePlayer3').value.trim();
+const minGamesChecked = document.getElementById('compareMinGames').checked;
 
-  if (!player1 && !player2 && !player3) {
-    document.getElementById('compareResult').innerHTML = '';
-    return;
-  }
+if (!player1 && !player2 && !player3) {
+  document.getElementById('compareResult').innerHTML = '';
+  return;
+}
 
-  const data = fullSeasonDataMap[season] || originalData;
-  const filteredData = minGamesChecked
-    ? data.filter(cols => parseInt(cols["출전 경기 수"]) >= 14)
-    : data;
+playersData = [player1, player2, player3]
+  .filter(name => name !== '')
+  .map((name, idx) => {
+    const seasonSelector = document.getElementById(`seasonSwitch-${idx}`);
+    const season = seasonSelector ? seasonSelector.value : '24-25'; // ✅ 실제 선택된 시즌 기반
 
-  playersData = [player1, player2, player3]
-    .filter(name => name !== '')
-    .map((name, idx) => {
-      const matched = filteredData.find(cols =>
-        cols["Player"].trim().toLowerCase() === name.toLowerCase()
-      );
-      if (matched) matched.__season = season;
+    const seasonData = fullSeasonDataMap[season] || [];
+    const matched = seasonData.find(cols =>
+      cols["Player"].trim().toLowerCase() === name.toLowerCase()
+    );
+
+    if (matched) {
+      matched.__season = season;
       return matched;
-    });
+    }
+    return undefined;
+  });
+
 
   if (playersData.some(p => p === undefined)) {
     alert('선수 이름을 정확히 입력해주세요.');
@@ -1839,11 +1878,12 @@ function comparePlayersFromCache() {
   let tableHTML = `<table><thead><tr><th>지표</th>`;
 
   players.forEach((p, idx) => {
-    const selectedSeason = p.__season || '23-24';
+    const selectedSeason = p.__season || '24-25';
     tableHTML += `<th>
       <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
         <span style="font-weight: bold; color: #FFF;">${p["Player"]} (${p["Team"]})</span>
         <select id="seasonSwitch-${idx}" class="season-switch">
+          <option value="22-23" ${selectedSeason === '22-23' ? 'selected' : ''}>22-23</option>
           <option value="23-24" ${selectedSeason === '23-24' ? 'selected' : ''}>23-24</option>
           <option value="24-25" ${selectedSeason === '24-25' ? 'selected' : ''}>24-25</option>
         </select>
@@ -1862,9 +1902,11 @@ const values = players.map((p, idx) => {
   const season = p.__season;
   const seasonData = fullSeasonDataMap[season] || [];
 
-  const filtered = minGamesChecked
-    ? seasonData.filter(row => parseInt(row["출전 경기 수"]) >= 14)
-    : seasonData;
+  const filtered = seasonData.filter(row => {
+    const isTypeMatched = activeTypes.has(row["구분"]);
+    const isMinGames = !minGamesChecked || parseInt(row["출전 경기 수"]) >= 14;
+    return isTypeMatched && isMinGames;
+  });
 
   const matched = filtered.find(row => row["Player"].trim().toLowerCase() === p["Player"].trim().toLowerCase());
 
@@ -1881,9 +1923,11 @@ const ranks = values.map((val, idx) => {
   const season = players[idx].__season;
   const seasonData = fullSeasonDataMap[season] || [];
 
-  const filtered = minGamesChecked
-    ? seasonData.filter(row => parseInt(row["출전 경기 수"]) >= 14)
-    : seasonData;
+const filtered = seasonData.filter(row => {
+  const isTypeMatched = activeTypes.has(row["구분"]);
+  const isMinGames = !minGamesChecked || parseInt(row["출전 경기 수"]) >= 14;
+  return isTypeMatched && isMinGames;
+});
 
   return calculateRank(filtered, stat.key, val, stat.higherBetter);
 });
@@ -1988,6 +2032,7 @@ setTimeout(() => {
 // ✅ 여기부터 새로 붙여넣기
 window.changeSeason = function(playerIndex, season) {
   const fileMap = {
+    '22-23': '22-23_KBL_stats.xlsx', // ✅ 추가
     '23-24': '23-24_KBL_stats.xlsx',
     '24-25': '24-25_KBL_stats.xlsx'
   };
@@ -2036,7 +2081,9 @@ window.changeSeason = function(playerIndex, season) {
 // 엔터키 입력 기능 추가 (유지)
 ['comparePlayer1', 'comparePlayer2', 'comparePlayer3'].forEach(id => {
   document.getElementById(id).addEventListener('keypress', function(e) {
-if (e.key === 'Enter') comparePlayers();
+    if (e.key === 'Enter') {
+      comparePlayers();  // Enter 키일 때만 실행
+    }
   });
 });
 
@@ -2264,6 +2311,7 @@ document.querySelectorAll('#statsTable thead th').forEach((header, index) => {
 function loadPlayersData2() {
   const season = document.getElementById('seasonSelectorPlayer')?.value || '23-24';
   const fileMap = {
+    '22-23': '22-23_KBL_stats.xlsx', // ✅ 추가
     '23-24': '23-24_KBL_stats.xlsx',
     '24-25': '24-25_KBL_stats.xlsx'
   };
@@ -2384,7 +2432,17 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-
+// ✅ 3페이지 비교 탭: 엔터 키 입력 시 자동 비교 실행
+['comparePlayer1', 'comparePlayer2', 'comparePlayer3'].forEach(id => {
+  const input = document.getElementById(id);
+  if (input) {
+    input.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        comparePlayers();
+      }
+    });
+  }
+});
   
 </script>
 
