@@ -2342,7 +2342,6 @@ jsonData.forEach(cols => {
       setTimeout(() => {
         const currentInput = document.getElementById('searchPlayer').value.trim();
         if (currentInput !== "") showPlayerStats();
-      }, 200);
     })
     .catch(error => {
       console.error("선수 개인 데이터 로딩 오류:", error);
