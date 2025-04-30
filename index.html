@@ -989,9 +989,59 @@ h2 {
   background-color: #FFA500;
   color: #000;
   border-color: #FFA500;
-}    
-  </style>
+}
+
+#tab-player-compare .category-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px 15px;
+  max-width: 1000px;
+  margin: 20px auto 10px auto;
+  padding: 10px;
+}
+#tab-player-compare .category-checkboxes label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+#tab-player-compare .category-checkboxes input[type="checkbox"] {
+  margin-right: 6px;
+}
+#tab-player-compare .filter-box-inline {
+  justify-content: center;
+  margin-bottom: 15px;
+}
+#tab-player-compare .stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.stat-card {
+  background-color: rgba(255,255,255,0.05);
+  padding: 15px;
+  border-radius: 8px;
+}
+.stat-card h3 {
+  font-size: 1.1rem;
+  color: #FFA500;
+  margin-bottom: 10px;
+}
+canvas {
+  width: 100% !important;
+  max-height: 240px;
+}
+
+    
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script> <!-- ✅ 이 줄 추가 -->
 </head>
+
 <body>
   <div class="side-logo left">
 <img src="https://github.com/dookie777/KBL-Player-Performance-Analyzer/raw/main/Seoul_SK_Knights_logo.svg.png" alt="Seoul SK Knights Logo">
@@ -1010,6 +1060,7 @@ h2 {
     <button class="tab-button active" data-tab="tab-all">선수 전체 검색</button>
     <button class="tab-button" data-tab="tab-player">선수 개인 검색</button>
     <button class="tab-button" data-tab="tab-compare">선수 비교 검색</button>
+    <button class="tab-button" data-tab="tab-player-compare">개인 비교 검색</button>
   </div>
 
 <div id="tab-all" class="tab-content active">
@@ -1174,10 +1225,111 @@ h2 {
   <div class="compare-result" id="compareResult"></div>
 </div>
 </div>
+<!-- ✅ 개인 비교 검색 탭 추가 -->
+<div id="tab-player-compare" class="tab-content">
+  <div class="input-box">
+    <select id="seasonSelectorCompare">
+      <option value="20-21">20-21 시즌</option>
+      <option value="21-22">21-22 시즌</option>
+      <option value="22-23">22-23 시즌</option>
+      <option value="23-24">23-24 시즌</option>
+      <option value="24-25" selected>24-25 시즌</option>
+    </select>
+    <input type="text" id="compareSearchPlayer" placeholder="선수 이름 입력">
+    <button id="compareSearchButton">검색</button>
+  </div>
+
+  <div class="category-checkboxes" id="compareStatCheckboxes">
+  <label><input type="checkbox" value="출전 경기 수"> 출전 경기 수</label>
+<label><input type="checkbox" value="총 출전 시간(초)"> 평균 출전 시간</label>
+<label><input type="checkbox" value="득점"> 득점</label>
+<label><input type="checkbox" value="평균 득점"> 평균 득점</label>
+<label><input type="checkbox" value="FGA"> FGA</label>
+<label><input type="checkbox" value="FG"> FG</label>
+
+<label><input type="checkbox" value="평균 FG 시도"> 평균 FG 시도</label>
+<label><input type="checkbox" value="평균 FG 성공"> 평균 FG 성공</label>
+<label><input type="checkbox" value="FG%"> FG%</label>
+<label><input type="checkbox" value="2PA"> 2PA</label>
+<label><input type="checkbox" value="2P"> 2P</label>
+<label><input type="checkbox" value="평균 2p 시도"> 평균 2p 시도</label>
+
+<label><input type="checkbox" value="평균 2p 성공"> 평균 2p 성공</label>
+<label><input type="checkbox" value="2P%"> 2P%</label>
+<label><input type="checkbox" value="3PA"> 3PA</label>
+<label><input type="checkbox" value="3P"> 3P</label>
+<label><input type="checkbox" value="평균 3p 시도"> 평균 3p 시도</label>
+<label><input type="checkbox" value="평균 3p 성공"> 평균 3p 성공</label>
+
+<label><input type="checkbox" value="3P%"> 3P%</label>
+<label><input type="checkbox" value="FTA"> FTA</label>
+<label><input type="checkbox" value="FT"> FT</label>
+<label><input type="checkbox" value="평균 FT 시도"> 평균 FT 시도</label>
+<label><input type="checkbox" value="평균 FT 성공"> 평균 FT 성공</label>
+<label><input type="checkbox" value="FT%"> FT%</label>
+
+<label><input type="checkbox" value="리바운드"> 리바운드</label>
+<label><input type="checkbox" value="평균 리바운드"> 평균 리바운드</label>
+<label><input type="checkbox" value="공격 리바운드"> 공격 리바운드</label>
+<label><input type="checkbox" value="평균 공격 리바운드"> 평균 공격 리바운드</label>
+<label><input type="checkbox" value="수비 리바운드"> 수비 리바운드</label>
+<label><input type="checkbox" value="평균 수비 리바운드"> 평균 수비 리바운드</label>
+
+<label><input type="checkbox" value="어시스트"> 어시스트</label>
+<label><input type="checkbox" value="평균 어시스트"> 평균 어시스트</label>
+<label><input type="checkbox" value="스틸"> 스틸</label>
+<label><input type="checkbox" value="평균 스틸"> 평균 스틸</label>
+<label><input type="checkbox" value="블록"> 블록</label>
+<label><input type="checkbox" value="평균 블록"> 평균 블록</label>
+
+<label><input type="checkbox" value="턴오버"> 턴오버</label>
+<label><input type="checkbox" value="평균 턴오버"> 평균 턴오버</label>
+<label><input type="checkbox" value="파울"> 파울</label>
+<label><input type="checkbox" value="평균 파울"> 평균 파울</label>
+<label><input type="checkbox" value="WS"> WS</label>
+<label><input type="checkbox" value="WS/40"> WS/40</label>
+
+<label><input type="checkbox" value="Offensive_WS"> Offensive_WS</label>
+<label><input type="checkbox" value="Defensive_WS"> Defensive_WS</label>
+<label><input type="checkbox" value="PER"> PER</label>
+<label><input type="checkbox" value="EFF"> EFF</label>
+<label><input type="checkbox" value="EFF/40"> EFF/40</label>
+<label><input type="checkbox" value="Offensive_rating"> Offensive Rating</label>
+
+<label><input type="checkbox" value="Defensive_rating"> Defensive Rating</label>
+<label><input type="checkbox" value="USG%"> USG%</label>
+<label><input type="checkbox" value="TS%"> TS%</label>
+<label><input type="checkbox" value="eFG%"> eFG%</label>
+<label><input type="checkbox" value="3PAr"> 3PAr</label>
+<label><input type="checkbox" value="FTr"> FTr</label>
+
+<label><input type="checkbox" value="ORB%"> ORB%</label>
+<label><input type="checkbox" value="DRB%"> DRB%</label>
+<label><input type="checkbox" value="TRB%"> TRB%</label>
+<label><input type="checkbox" value="AST%"> AST%</label>
+<label><input type="checkbox" value="STL%"> STL%</label>
+<label><input type="checkbox" value="BS%"> BS%</label>
+<label><input type="checkbox" value="TOV%"> TOV%</label>
+  <!-- JS로 체크박스 삽입 예정 -->
+  </div>
+
+  <div class="filter-box-inline" id="comparePlayerFilterBox">
+    <button class="filter-btn active" data-type="국내">국내 선수</button>
+    <button class="filter-btn active" data-type="외국인">외국인 선수</button>
+    <button class="filter-btn active" data-type="아시아쿼터">아시아쿼터</button>
+  </div>
+
+  <div id="compareStatResults" class="stats-container">
+    <!-- 선택된 지표마다 카드 출력 예정 -->
+  </div>
+</div>
+
+</div>
   <footer class="footer">
     © 2025 The Eroom Sports. All rights reserved.
   </footer>
 </div>
+
 
 <script>
 const statsFormats = {
@@ -2383,6 +2535,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 })();
+document.addEventListener('DOMContentLoaded', () => {
+  const checkboxes = document.querySelectorAll('#compareStatCheckboxes input[type="checkbox"]');
+
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+      const checked = document.querySelectorAll('#compareStatCheckboxes input[type="checkbox"]:checked');
+      if (checked.length > 3) {
+        cb.checked = false;
+        alert("최대 3개까지 선택할 수 있습니다.");
+      }
+    });
+  });
+});
 
    // ✅ 여기에 필터 버튼 이벤트 연결 코드 삽입
 document.querySelectorAll('.filter-toggle').forEach(btn => {
@@ -2440,6 +2605,198 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+});
+document.getElementById('compareSearchButton').addEventListener('click', async () => {
+  const playerName = document.getElementById('compareSearchPlayer').value.trim();
+  const selectedMetrics = Array.from(document.querySelectorAll('#compareStatCheckboxes input[type="checkbox"]:checked'))
+                               .map(cb => cb.value);
+
+  if (!playerName || selectedMetrics.length === 0) {
+    alert('선수 이름과 지표를 선택해주세요.');
+    return;
+  }
+
+  const resultContainer = document.getElementById('compareStatResults');
+  resultContainer.innerHTML = ''; // 초기화
+
+  const seasons = ['20-21', '21-22', '22-23', '23-24', '24-25'];
+  const fileMap = {
+    '20-21': '20-21_KBL_stats.xlsx',
+    '21-22': '21-22_KBL_stats.xlsx',
+    '22-23': '22-23_KBL_stats.xlsx',
+    '23-24': '23-24_KBL_stats.xlsx',
+    '24-25': '24-25_KBL_stats.xlsx'
+  };
+
+  const playerStats = {};
+  const seasonLabels = [];
+
+  for (const season of seasons) {
+    try {
+      const res = await fetch(`https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`);
+      const data = await res.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      // 이름/팀명 정제
+      jsonData.forEach(cols => {
+        cols["Player"] = (cols["Player"] || "").trim();
+        cols["Team"] = (cols["Team"] || "").trim();
+        cols["구분"] = (cols["구분"] || "").trim();
+        const m = parseInt(cols["m"]) || 0;
+        const s = parseInt(cols["s"]) || 0;
+        cols["총 출전 시간(초)"] = m * 60 + s;
+      });
+
+      const filtered = jsonData.filter(row =>
+        activeTypes.has(row["구분"]) &&
+        row["Player"].toLowerCase() === playerName.toLowerCase()
+      );
+
+      if (filtered.length > 0) {
+        playerStats[season] = filtered[0];
+        seasonLabels.push(season);
+      }
+
+    } catch (err) {
+      console.error(`❌ ${season} 로딩 실패`, err);
+    }
+  }
+
+  if (Object.keys(playerStats).length === 0) {
+    alert("선수를 찾을 수 없습니다.");
+    return;
+  }
+
+  selectedMetrics.forEach((metric, idx) => {
+    const canvasId = `metricChart${idx}`;
+    const statData = [];
+    const rankData = [];
+
+    // 전체 시즌에서 랭킹 계산용
+    const allSeasonStats = {};
+
+    seasons.forEach(season => {
+      if (playerStats[season]) {
+        const val = parseFloat(playerStats[season][metric]) || 0;
+        statData.push(val);
+        allSeasonStats[season] = val;
+      } else {
+        statData.push(null);
+        allSeasonStats[season] = null;
+      }
+    });
+
+    // 리그 내 순위 계산
+    const rankPromises = seasons.map(async season => {
+      if (!playerStats[season]) return '-';
+      const res = await fetch(`https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`);
+      const data = await res.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      const values = jsonData
+        .map(row => parseFloat(row[metric]))
+        .filter(v => !isNaN(v));
+
+      const sorted = [...values].sort((a, b) => {
+        const config = statsFormats[metric] || { higherBetter: true };
+        return config.higherBetter === false ? a - b : b - a;
+      });
+
+      const playerValue = parseFloat(playerStats[season][metric]);
+      const rank = sorted.indexOf(playerValue) + 1;
+      return isNaN(rank) || rank === 0 ? '-' : rank;
+    });
+
+    Promise.all(rankPromises).then(ranks => {
+      // 결과 카드 구성
+      const card = document.createElement('div');
+      card.className = 'stat-card';
+      card.innerHTML = `
+        <h3>${metric}</h3>
+        <canvas id="${canvasId}"></canvas>
+        <table style="width:100%; margin-top:10px; font-size:0.85rem; color:#fff;">
+          <thead>
+            <tr><th>시즌</th><th>수치</th><th>순위</th></tr>
+          </thead>
+          <tbody>
+            ${seasons.map((season, i) => `
+              <tr>
+                <td>${season}</td>
+                <td>${statData[i] ?? '-'}</td>
+                <td>${ranks[i] ?? '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      document.getElementById('compareStatResults').appendChild(card);
+
+      // Chart.js 렌더링
+      new Chart(document.getElementById(canvasId), {
+        type: 'line',
+        data: {
+          labels: seasons,
+          datasets: [{
+            label: metric,
+            data: statData,
+            borderColor: '#FFA500',
+            backgroundColor: 'rgba(255,165,0,0.2)',
+            tension: 0.3,
+            pointRadius: 5,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#FFA500',
+            pointBorderColor: '#fff',
+            datalabels: {
+              align: 'top',
+              anchor: 'end'
+            }
+          }]
+        },
+        plugins: [ChartDataLabels],
+options: {
+  responsive: true,
+  plugins: {
+    legend: { display: false },
+    datalabels: {
+      color: '#fff',
+      font: {
+        weight: 'bold'
+      },
+      formatter: (value, ctx) => {
+        const rank = ranks[ctx.dataIndex];
+        return `${value} / ${rank}위`;
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          const value = context.parsed.y;
+          const rank = ranks[context.dataIndex];
+          return ` ${value}점 / ${rank}위`;
+        }
+      }
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: { color: '#fff' },
+      grid: { color: '#333' }
+    },
+    x: {
+      ticks: { color: '#fff' },
+      grid: { color: '#333' }
+    }
+  }
+}
+
+      });
+    });
+  });
 });
   
 </script>
