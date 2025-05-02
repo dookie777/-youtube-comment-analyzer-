@@ -1084,7 +1084,7 @@ canvas {
 #compareStatCheckboxes .row {
   display: flex;
   flex-wrap: nowrap;
-  gap: 16px;                      /* ✅ 가로 간격 균일화 */
+  gap: 14px;                      /* ✅ 가로 간격 균일화 */
 }
     
 #compareStatCheckboxes .row label {
@@ -1107,8 +1107,8 @@ canvas {
 }
 
 #compareStatCheckboxes input[type="checkbox"] {
-  width: 12px;                 /* ✅ 체크박스 크기 축소 */
-  height: 12px;
+  width: 11px;                 /* ✅ 체크박스 크기 축소 */
+  height: 11px;
 }
 #compareStatResults {
   margin-top: 40px; /* 필요 시 이쪽도 조절 가능 */
@@ -1323,14 +1323,14 @@ canvas {
   <label><input type="checkbox" value="총 출전 시간(초)"> 평균 출전 시간</label>
   <label><input type="checkbox" value="득점"> 득점</label>
   <label><input type="checkbox" value="평균 득점"> 평균 득점</label>
-  </div>  
-
-  <div class="row">
   <label><input type="checkbox" value="FGA"> FGA</label>
   <label><input type="checkbox" value="FG"> FG</label>
   <label><input type="checkbox" value="평균 FG 시도"> 평균 FG 시도</label>
   <label><input type="checkbox" value="평균 FG 성공"> 평균 FG 성공</label>
   <label><input type="checkbox" value="FG%"> FG%</label>
+  </div>  
+
+  <div class="row">
   <label><input type="checkbox" value="2PA"> 2PA</label>
   <label><input type="checkbox" value="2P"> 2P</label>
   <label><input type="checkbox" value="평균 2p 시도"> 평균 2p 시도</label>
@@ -1344,6 +1344,9 @@ canvas {
   <label><input type="checkbox" value="평균 3p 시도"> 평균 3p 시도</label>
   <label><input type="checkbox" value="평균 3p 성공"> 평균 3p 성공</label>
   <label><input type="checkbox" value="3P%"> 3P%</label>
+  </div>  
+
+  <div class="row">
   <label><input type="checkbox" value="FTA"> FTA</label>
   <label><input type="checkbox" value="FT"> FT</label>
   <label><input type="checkbox" value="평균 FT 시도"> 평균 FT 시도</label>
@@ -2842,8 +2845,8 @@ options: {
     padding: {
       top: 45,
       bottom: 10,
-      left: 10,    // ✅ 왼쪽 여백 추가
-      right: 20    // ✅ 오른쪽 여백 추가
+      left: 25,    // ✅ 왼쪽 여백 추가
+      right: 25    // ✅ 오른쪽 여백 추가
     }
   },
   responsive: true,
