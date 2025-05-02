@@ -1046,7 +1046,7 @@ h2 {
 }
 .stat-card {
   width: 320px;
-  padding-top: 8px; /* 전체 카드 안쪽 상단 패딩을 줄여 그래프를 위로 이동 */
+  padding-top: 0px; /* 전체 카드 안쪽 상단 패딩을 줄여 그래프를 위로 이동 */
   flex: 0 0 auto;
 }
 .stat-card h3 {
@@ -1114,22 +1114,49 @@ canvas {
 #tab-player-compare {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 180px);  /* 상단 여백 제외 */
-  overflow: hidden;
+  height: auto;             /* 🔁 이 줄 수정: 기존 calc(100vh - 180px) → auto */
+  overflow: visible;        /* 🔁 이 줄 수정: 기존 hidden → visible */
 }
-    
-#compareStatResults {
-  flex: 1;
+.scroll-area {
+  max-height: calc(100vh - 280px);
   overflow-y: auto;
-  padding: 20px;
-  padding-bottom: 100px;  /* ✅ 푸터와 겹치지 않도록 */
+  padding-right: 10px;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+/* ✅ 스크롤바 디자인 통일 */
+.scroll-area::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scroll-area::-webkit-scrollbar-track {
+  background: #121212;
+  border-radius: 5px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+  border: 2px solid #121212;
+}
+#compareStatResults {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
   align-items: flex-start;
+  overflow-y: auto;
+  padding: 20px 20px 80px 20px;  /* 푸터 침범 방지 */
   box-sizing: border-box;
+  max-height: none;             /* ← 이 줄로 인해 스크롤 조건이 콘텐츠 양에 따라 결정됨 */
 }
+
+#compareStatResults {
+  margin-top: 0 !important;     /* ✅ 유지 */
+  padding-top: 0 !important;    /* ✅ 추가해도 되지만 이미 있는 상태 */
+}
+    
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script> <!-- ✅ 이 줄 추가 -->
@@ -1422,9 +1449,9 @@ canvas {
   <label><input type="checkbox" value="TOV%"> TOV%</label>
   </div>
 </div>
-  <div id="compareStatResults" class="stats-container">
-    <!-- 선택된 지표마다 카드 출력 예정 -->
-  </div>
+<div class="scroll-area">
+  <div id="compareStatResults" class="stats-container">...</div>
+</div>
 </div>
 
 </div>
