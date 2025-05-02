@@ -1027,6 +1027,7 @@ h2 {
   background-color: rgba(255,255,255,0.05);
   padding: 15px;
   border-radius: 8px;
+  min-height: 360px;  /* ← 기존보다 약 1.5배 (기존 약 240px로 추정) */
 }
 .stat-card h3 {
   font-size: 1.1rem;
@@ -1035,7 +1036,28 @@ h2 {
 }
 canvas {
   width: 100% !important;
-  max-height: 240px;
+  max-height: 500px;  /* ✅ 기존 240px → 360px (1.5배) */
+}
+
+#comparePlayerFilterBox {
+  justify-content: center;
+  margin-bottom: 0px;
+  margin-top: 0px;  /* 선택적으로 조정 */
+}    
+#compareStatCheckboxes {
+  display: flex;
+  flex-direction: column;       /* 행 방향으로 세로 정렬 */
+  gap: 8px;
+  max-width: 1000px;
+  margin: 5px auto 0 auto;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+#compareStatCheckboxes .row {
+  display: flex;
+  flex-wrap: nowrap;            /* 한 줄로 고정 */
+  gap: 14px;
 }
 
     
@@ -1226,93 +1248,14 @@ canvas {
 </div>
   <div class="compare-result" id="compareResult"></div>
 </div>
-</div>
+
 <!-- ✅ 개인 비교 검색 탭 추가 -->
 <div id="tab-player-compare" class="tab-content">
   <div class="input-box">
-    <select id="seasonSelectorCompare">
-      <option value="20-21">20-21 시즌</option>
-      <option value="21-22">21-22 시즌</option>
-      <option value="22-23">22-23 시즌</option>
-      <option value="23-24">23-24 시즌</option>
-      <option value="24-25" selected>24-25 시즌</option>
-    </select>
     <input type="text" id="compareSearchPlayer" placeholder="선수 이름 입력">
     <button id="compareSearchButton">검색</button>
-  </div>
-
-  <div class="category-checkboxes" id="compareStatCheckboxes">
-  <label><input type="checkbox" value="출전 경기 수"> 출전 경기 수</label>
-<label><input type="checkbox" value="총 출전 시간(초)"> 평균 출전 시간</label>
-<label><input type="checkbox" value="득점"> 득점</label>
-<label><input type="checkbox" value="평균 득점"> 평균 득점</label>
-<label><input type="checkbox" value="FGA"> FGA</label>
-<label><input type="checkbox" value="FG"> FG</label>
-
-<label><input type="checkbox" value="평균 FG 시도"> 평균 FG 시도</label>
-<label><input type="checkbox" value="평균 FG 성공"> 평균 FG 성공</label>
-<label><input type="checkbox" value="FG%"> FG%</label>
-<label><input type="checkbox" value="2PA"> 2PA</label>
-<label><input type="checkbox" value="2P"> 2P</label>
-<label><input type="checkbox" value="평균 2p 시도"> 평균 2p 시도</label>
-
-<label><input type="checkbox" value="평균 2p 성공"> 평균 2p 성공</label>
-<label><input type="checkbox" value="2P%"> 2P%</label>
-<label><input type="checkbox" value="3PA"> 3PA</label>
-<label><input type="checkbox" value="3P"> 3P</label>
-<label><input type="checkbox" value="평균 3p 시도"> 평균 3p 시도</label>
-<label><input type="checkbox" value="평균 3p 성공"> 평균 3p 성공</label>
-
-<label><input type="checkbox" value="3P%"> 3P%</label>
-<label><input type="checkbox" value="FTA"> FTA</label>
-<label><input type="checkbox" value="FT"> FT</label>
-<label><input type="checkbox" value="평균 FT 시도"> 평균 FT 시도</label>
-<label><input type="checkbox" value="평균 FT 성공"> 평균 FT 성공</label>
-<label><input type="checkbox" value="FT%"> FT%</label>
-
-<label><input type="checkbox" value="리바운드"> 리바운드</label>
-<label><input type="checkbox" value="평균 리바운드"> 평균 리바운드</label>
-<label><input type="checkbox" value="공격 리바운드"> 공격 리바운드</label>
-<label><input type="checkbox" value="평균 공격 리바운드"> 평균 공격 리바운드</label>
-<label><input type="checkbox" value="수비 리바운드"> 수비 리바운드</label>
-<label><input type="checkbox" value="평균 수비 리바운드"> 평균 수비 리바운드</label>
-
-<label><input type="checkbox" value="어시스트"> 어시스트</label>
-<label><input type="checkbox" value="평균 어시스트"> 평균 어시스트</label>
-<label><input type="checkbox" value="스틸"> 스틸</label>
-<label><input type="checkbox" value="평균 스틸"> 평균 스틸</label>
-<label><input type="checkbox" value="블록"> 블록</label>
-<label><input type="checkbox" value="평균 블록"> 평균 블록</label>
-
-<label><input type="checkbox" value="턴오버"> 턴오버</label>
-<label><input type="checkbox" value="평균 턴오버"> 평균 턴오버</label>
-<label><input type="checkbox" value="파울"> 파울</label>
-<label><input type="checkbox" value="평균 파울"> 평균 파울</label>
-<label><input type="checkbox" value="WS"> WS</label>
-<label><input type="checkbox" value="WS/40"> WS/40</label>
-
-<label><input type="checkbox" value="Offensive_WS"> Offensive_WS</label>
-<label><input type="checkbox" value="Defensive_WS"> Defensive_WS</label>
-<label><input type="checkbox" value="PER"> PER</label>
-<label><input type="checkbox" value="EFF"> EFF</label>
-<label><input type="checkbox" value="EFF/40"> EFF/40</label>
-<label><input type="checkbox" value="Offensive_rating"> Offensive Rating</label>
-
-<label><input type="checkbox" value="Defensive_rating"> Defensive Rating</label>
-<label><input type="checkbox" value="USG%"> USG%</label>
-<label><input type="checkbox" value="TS%"> TS%</label>
-<label><input type="checkbox" value="eFG%"> eFG%</label>
-<label><input type="checkbox" value="3PAr"> 3PAr</label>
-<label><input type="checkbox" value="FTr"> FTr</label>
-
-<label><input type="checkbox" value="ORB%"> ORB%</label>
-<label><input type="checkbox" value="DRB%"> DRB%</label>
-<label><input type="checkbox" value="TRB%"> TRB%</label>
-<label><input type="checkbox" value="AST%"> AST%</label>
-<label><input type="checkbox" value="STL%"> STL%</label>
-<label><input type="checkbox" value="BS%"> BS%</label>
-<label><input type="checkbox" value="TOV%"> TOV%</label>
-  <!-- JS로 체크박스 삽입 예정 -->
+    <input type="checkbox" id="compareMinGamesSingle">
+    <label for="compareMinGamesSingle">규정 경기 이상(14G)</label>
   </div>
 
   <div class="filter-box-inline" id="comparePlayerFilterBox">
@@ -1320,7 +1263,93 @@ canvas {
     <button class="filter-btn active" data-type="외국인">외국인 선수</button>
     <button class="filter-btn active" data-type="아시아쿼터">아시아쿼터</button>
   </div>
+  
+  <div class="category-checkboxes" id="compareStatCheckboxes">
+  <div class="row">
+  <label><input type="checkbox" value="출전 경기 수"> 출전 경기 수</label>
+  <label><input type="checkbox" value="총 출전 시간(초)"> 평균 출전 시간</label>
+  <label><input type="checkbox" value="득점"> 득점</label>
+  <label><input type="checkbox" value="평균 득점"> 평균 득점</label>
+  </div>  
 
+  <div class="row">
+  <label><input type="checkbox" value="FGA"> FGA</label>
+  <label><input type="checkbox" value="FG"> FG</label>
+  <label><input type="checkbox" value="평균 FG 시도"> 평균 FG 시도</label>
+  <label><input type="checkbox" value="평균 FG 성공"> 평균 FG 성공</label>
+  <label><input type="checkbox" value="FG%"> FG%</label>
+  <label><input type="checkbox" value="2PA"> 2PA</label>
+  <label><input type="checkbox" value="2P"> 2P</label>
+  <label><input type="checkbox" value="평균 2p 시도"> 평균 2p 시도</label>
+  <label><input type="checkbox" value="평균 2p 성공"> 평균 2p 성공</label>
+  <label><input type="checkbox" value="2P%"> 2P%</label>
+  </div>  
+
+  <div class="row">
+  <label><input type="checkbox" value="3PA"> 3PA</label>
+  <label><input type="checkbox" value="3P"> 3P</label>
+  <label><input type="checkbox" value="평균 3p 시도"> 평균 3p 시도</label>
+  <label><input type="checkbox" value="평균 3p 성공"> 평균 3p 성공</label>
+  <label><input type="checkbox" value="3P%"> 3P%</label>
+  <label><input type="checkbox" value="FTA"> FTA</label>
+  <label><input type="checkbox" value="FT"> FT</label>
+  <label><input type="checkbox" value="평균 FT 시도"> 평균 FT 시도</label>
+  <label><input type="checkbox" value="평균 FT 성공"> 평균 FT 성공</label>
+  <label><input type="checkbox" value="FT%"> FT%</label>
+  </div>  
+
+  <div class="row">
+  <label><input type="checkbox" value="리바운드"> 리바운드</label>
+  <label><input type="checkbox" value="평균 리바운드"> 평균 리바운드</label>
+  <label><input type="checkbox" value="공격 리바운드"> 공격 리바운드</label>
+  <label><input type="checkbox" value="평균 공격 리바운드"> 평균 공격 리바운드</label>
+  <label><input type="checkbox" value="수비 리바운드"> 수비 리바운드</label>
+  <label><input type="checkbox" value="평균 수비 리바운드"> 평균 수비 리바운드</label>
+  </div>  
+
+  <div class="row">
+  <label><input type="checkbox" value="어시스트"> 어시스트</label>
+  <label><input type="checkbox" value="평균 어시스트"> 평균 어시스트</label>
+  <label><input type="checkbox" value="스틸"> 스틸</label>
+  <label><input type="checkbox" value="평균 스틸"> 평균 스틸</label>
+  <label><input type="checkbox" value="블록"> 블록</label>
+  <label><input type="checkbox" value="평균 블록"> 평균 블록</label>
+  <label><input type="checkbox" value="턴오버"> 턴오버</label>
+  <label><input type="checkbox" value="평균 턴오버"> 평균 턴오버</label>
+  <label><input type="checkbox" value="파울"> 파울</label>
+  <label><input type="checkbox" value="평균 파울"> 평균 파울</label>
+  </div>  
+
+  <div class="row">
+  <label><input type="checkbox" value="WS"> WS</label>
+  <label><input type="checkbox" value="WS/40"> WS/40</label>
+  <label><input type="checkbox" value="Offensive_WS"> Offensive_WS</label>
+  <label><input type="checkbox" value="Defensive_WS"> Defensive_WS</label>
+  <label><input type="checkbox" value="PER"> PER</label>
+  <label><input type="checkbox" value="EFF"> EFF</label>
+  <label><input type="checkbox" value="EFF/40"> EFF/40</label>
+  </div>  
+
+  <div class="row">
+  <label><input type="checkbox" value="Offensive_rating"> Offensive Rating</label>
+  <label><input type="checkbox" value="Defensive_rating"> Defensive Rating</label>
+  <label><input type="checkbox" value="USG%"> USG%</label>
+  <label><input type="checkbox" value="TS%"> TS%</label>
+  <label><input type="checkbox" value="eFG%"> eFG%</label>
+  <label><input type="checkbox" value="3PAr"> 3PAr</label>
+  <label><input type="checkbox" value="FTr"> FTr</label>
+  </div>  
+
+  <div class="row">
+  <label><input type="checkbox" value="ORB%"> ORB%</label>
+  <label><input type="checkbox" value="DRB%"> DRB%</label>
+  <label><input type="checkbox" value="TRB%"> TRB%</label>
+  <label><input type="checkbox" value="AST%"> AST%</label>
+  <label><input type="checkbox" value="STL%"> STL%</label>
+  <label><input type="checkbox" value="BS%"> BS%</label>
+  <label><input type="checkbox" value="TOV%"> TOV%</label>
+  </div>
+</div>
   <div id="compareStatResults" class="stats-container">
     <!-- 선택된 지표마다 카드 출력 예정 -->
   </div>
@@ -2657,10 +2686,13 @@ document.getElementById('compareSearchButton').addEventListener('click', async (
         cols["총 출전 시간(초)"] = m * 60 + s;
       });
 
-      const filtered = jsonData.filter(row =>
-        activeTypes.has(row["구분"]) &&
-        row["Player"].toLowerCase() === playerName.toLowerCase()
-      );
+    const minGamesChecked = document.getElementById('compareMinGamesSingle')?.checked;
+    
+    const filtered = jsonData.filter(row =>
+      activeTypes.has(row["구분"]) &&
+      row["Player"].toLowerCase() === playerName.toLowerCase() &&
+      (!minGamesChecked || parseInt(row["출전 경기 수"]) >= 14)
+    );
 
       if (filtered.length > 0) {
         playerStats[season] = filtered[0];
@@ -2724,22 +2756,8 @@ document.getElementById('compareSearchButton').addEventListener('click', async (
       const card = document.createElement('div');
       card.className = 'stat-card';
       card.innerHTML = `
-        <h3>${metric}</h3>
-        <canvas id="${canvasId}"></canvas>
-        <table style="width:100%; margin-top:10px; font-size:0.85rem; color:#fff;">
-          <thead>
-            <tr><th>시즌</th><th>수치</th><th>순위</th></tr>
-          </thead>
-          <tbody>
-            ${seasons.map((season, i) => `
-              <tr>
-                <td>${season}</td>
-                <td>${statData[i] ?? '-'}</td>
-                <td>${ranks[i] ?? '-'}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+          <h3>${metric}</h3>
+          <canvas id="${canvasId}" height="360"></canvas>
       `;
       document.getElementById('compareStatResults').appendChild(card);
 
@@ -2776,17 +2794,19 @@ options: {
       },
       formatter: (value, ctx) => {
         const rank = ranks[ctx.dataIndex];
-        return `${value} / ${rank}위`;
+        const metric = ctx.chart.data.datasets[0].label;
+        return `${formatStatValue(metric, value)} / ${rank}위`;
       }
     },
     tooltip: {
-      callbacks: {
-        label: (context) => {
-          const value = context.parsed.y;
-          const rank = ranks[context.dataIndex];
-          return ` ${value}점 / ${rank}위`;
-        }
+    callbacks: {
+      label: (context) => {
+        const value = context.parsed.y;
+        const rank = ranks[context.dataIndex];
+        const metric = context.dataset.label;
+        return ` ${formatStatValue(metric, value)} / ${rank}위`;
       }
+    }
     }
   },
   scales: {
@@ -2808,18 +2828,7 @@ options: {
 });
   
 </script>
-<script>
-window.addEventListener('DOMContentLoaded', () => {
-  // 탭 기본 초기화
-  const targetTab = document.querySelector('[data-tab="tab-player-compare"]');
-  if (targetTab) {
-    tabs.forEach(t => t.classList.remove('active'));
-    contents.forEach(c => c.classList.remove('active'));
-    targetTab.classList.add('active');
-    document.getElementById('tab-player-compare').classList.add('active');
-  }
-});
-</script>
+
  
  </body>
  </html>
