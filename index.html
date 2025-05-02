@@ -1018,9 +1018,10 @@ h2 {
 }
 #tab-player-compare .stats-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;          /* ✅ 카드들을 화면 정중앙에 맞춤 */
+  flex-wrap: wrap;
   gap: 20px;
-  max-width: 1000px;
+  max-width: 100%;                 /* ✅ 고정폭 제거 */
   margin: 0 auto;
 }
 .stat-card {
@@ -1028,6 +1029,10 @@ h2 {
   padding: 15px;
   border-radius: 8px;
   min-height: 360px;  /* ← 기존보다 약 1.5배 (기존 약 240px로 추정) */
+}
+.stat-card {
+  width: 320px;
+  flex: 0 0 auto;
 }
 .stat-card h3 {
   font-size: 1.1rem;
@@ -1427,7 +1432,34 @@ const statsFormats = {
   "TOV%": {unit: '%', decimals: 3}
 };
 
-  
+function formatStatValue(key, value) {
+  const format = statsFormats[key];
+  if (!format) return value;
+
+  const percentExcludedKeys = ['ORB%', 'DRB%', 'TRB%', 'AST%', 'STL%', 'BS%', 'TOV%'];
+
+  if (key === "총 출전 시간(초)" || format.unit === '분 초') {
+    const totalSeconds = parseInt(value, 10);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}분 ${seconds}초`;
+  }
+
+  let numericValue = parseFloat(value);
+
+  // ✅ 퍼센트 항목 보정: 값이 1 미만이면 100을 곱해서 % 형태로 전환
+  if (format.unit === '%' && !percentExcludedKeys.includes(key) && numericValue < 1.0) {
+    numericValue *= 100;
+  }
+
+  const formattedValue = numericValue.toFixed(format.decimals);
+
+  if (percentExcludedKeys.includes(key)) {
+    return formattedValue; // 단위 제거 대상
+  }
+
+  return formattedValue + (format.unit !== '분 초' ? format.unit : '');
+}  
  const tabs = document.querySelectorAll('.tab-button');
  const contents = document.querySelectorAll('.tab-content');
  
@@ -1975,35 +2007,6 @@ document.getElementById('minGames').addEventListener('change', function() {
     showPlayerStats();  // Player 입력되어 있으면 바로 다시 검색
   }
 });
-
-function formatStatValue(key, value) {
-  const format = statsFormats[key];
-  if (!format) return value;
-
-  const percentExcludedKeys = ['ORB%', 'DRB%', 'TRB%', 'AST%', 'STL%', 'BS%', 'TOV%'];
-
-  if (key === "총 출전 시간(초)" || format.unit === '분 초') {
-    const totalSeconds = parseInt(value, 10);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}분 ${seconds}초`;
-  }
-
-  let numericValue = parseFloat(value);
-
-  // ✅ 퍼센트 항목 보정: 값이 1 미만이면 100을 곱해서 % 형태로 전환
-  if (format.unit === '%' && !percentExcludedKeys.includes(key) && numericValue < 1.0) {
-    numericValue *= 100;
-  }
-
-  const formattedValue = numericValue.toFixed(format.decimals);
-
-  if (percentExcludedKeys.includes(key)) {
-    return formattedValue; // 단위 제거 대상
-  }
-
-  return formattedValue + (format.unit !== '분 초' ? format.unit : '');
-}
 
 
 window.comparePlayers = function () {
@@ -2784,6 +2787,14 @@ document.getElementById('compareSearchButton').addEventListener('click', async (
         },
         plugins: [ChartDataLabels],
 options: {
+  layout: {
+    padding: {
+      top: 45,
+      bottom: 10,
+      left: 10,    // ✅ 왼쪽 여백 추가
+      right: 20    // ✅ 오른쪽 여백 추가
+    }
+  },
   responsive: true,
   plugins: {
     legend: { display: false },
@@ -2792,11 +2803,11 @@ options: {
       font: {
         weight: 'bold'
       },
-      formatter: (value, ctx) => {
-        const rank = ranks[ctx.dataIndex];
-        const metric = ctx.chart.data.datasets[0].label;
-        return `${formatStatValue(metric, value)} / ${rank}위`;
-      }
+    formatter: (value, ctx) => {
+      const rank = ranks[ctx.dataIndex];
+      const metric = ctx.chart.data.datasets[0].label;
+      return `${formatStatValue(metric, value)}\n${rank}위`;
+    }
     },
     tooltip: {
     callbacks: {
