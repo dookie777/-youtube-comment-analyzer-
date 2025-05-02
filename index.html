@@ -2598,6 +2598,9 @@ document.addEventListener("DOMContentLoaded", function () {
   loadPlayersData2();
   document.getElementById('compareResult').innerHTML = '';
 
+  document.getElementById('compareMinGamesSingle').addEventListener('change', () => {
+  document.getElementById('compareSearchButton').click();
+});
 
   // ✅ compareFilterBox 버튼 클릭 이벤트 연결
 (function () {
