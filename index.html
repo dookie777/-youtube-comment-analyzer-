@@ -2729,7 +2729,11 @@ document.getElementById('compareSearchButton').addEventListener('click', async (
         allSeasonStats[season] = null;
       }
     });
-
+    
+    const isPercentMetric = metric.includes('%');
+    const validValues = statData.filter(v => v !== null && !isNaN(v));
+    const minValue = Math.min(...validValues);
+    const yMin = isPercentMetric ? Math.max(0, minValue - 0.05) : undefined;
     // 리그 내 순위 계산
     const rankPromises = seasons.map(async season => {
       if (!playerStats[season]) return '-';
@@ -2819,12 +2823,22 @@ options: {
     }
     }
   },
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: { color: '#fff' },
-      grid: { color: '#333' }
+scales: {
+  y: {
+    beginAtZero: false,
+    min: yMin,
+    ticks: {
+      display: false
     },
+    grid: {
+      color: '#333',
+      drawTicks: false,         // ✅ 축 끝에 튀어나온 눈금 제거
+      drawBorder: false,        // ✅ y축 왼쪽 경계선 제거
+      borderColor: '#333',
+      borderWidth: 0,
+      clip: false               // ✅ 캔버스 밖 렌더링 방지
+    }
+  },
     x: {
       ticks: { color: '#fff' },
       grid: { color: '#333' }
