@@ -212,7 +212,7 @@ thead th {
 
 .card {
   background-color: rgba(255,255,255,0.05);
-  padding: 10px;
+  padding: 0px 10px 10px 10px; /* 상단만 0 */
   border-radius: 0px;
   text-align: center;
   min-height: 350px;
@@ -223,7 +223,7 @@ thead th {
 .card.secondary h3 { color: #88c2dd; }
 
 .card h3 {
-  margin: 0 0 8px;
+  padding: 0px 10px 10px 10px; /* top을 5px로 줄임 */
   font-size: 1.1rem;
 }
 
@@ -512,6 +512,59 @@ thead th {
   margin-right: 5px;
   font-size: 0.8rem;
 }
+/* 3페이지 전용 (선수 비교 검색 탭) */
+#tab-compare .category-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px 20px;
+  max-width: 900px;
+  margin: 10px auto 20px auto;
+  justify-content: center;
+  align-items: center;
+}
+#tab-compare .category-checkboxes label {
+  font-size: 0.85rem;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#tab-compare .category-checkboxes input[type="checkbox"] {
+  margin-right: 7px;
+}
+/* 4페이지 전용 (개인 비교 검색 탭) */
+#tab-player-compare .category-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 215px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px 30px 40px 30px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+#tab-player-compare .category-checkboxes .row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+}
+#tab-player-compare .category-checkboxes label {
+  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#tab-player-compare .category-checkboxes input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+}
+
 
 /* 상단 6개 항목 정확히 균등 배치 (한 행에 하나씩 정확히 들어가도록 설정) */
 .category-checkboxes label:nth-child(-n+6) {
@@ -989,20 +1042,22 @@ h2 {
   background-color: rgba(255,255,255,0.05);
   padding: 15px;
   border-radius: 8px;
-  min-height: 360px;  /* ← 기존보다 약 1.5배 (기존 약 240px로 추정) */
+  min-height: 380px;
 }
 .stat-card {
   width: 320px;
+  padding-top: 8px; /* 전체 카드 안쪽 상단 패딩을 줄여 그래프를 위로 이동 */
   flex: 0 0 auto;
 }
 .stat-card h3 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #FFA500;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
 }
 canvas {
   width: 100% !important;
-  max-height: 500px;  /* ✅ 기존 240px → 360px (1.5배) */
+  margin-top: -5px; /* 여기가 없다면 새로 추가 가능 */
+  max-height: 340px;  /* ✅ 기존 240px → 360px (1.5배) */
 }
 
 #comparePlayerFilterBox {
@@ -1011,21 +1066,27 @@ canvas {
   margin-top: 0px;  /* 선택적으로 조정 */
 }    
 #compareStatCheckboxes {
-  display: grid;
-  grid-template-rows: repeat(8, auto);
-  row-gap: 12px;
-  width: 100%;                    /* ✅ 카드 전체 너비로 확장 */
-  max-width: 100%;                /* ✅ 기존 1200px 제한 제거 */
-  padding: 10px 30px;             /* ✅ 좌우 여백 조정 */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;                       /* ✅ 줄 간격 줄임 */
+  max-height: 215px;             /* ✅ 8줄 기준 노출 높이로 제한 */
+  overflow-x: auto;              /* ✅ 가로 스크롤 허용 */
+  overflow-y: hidden;
+  padding: 20px 30px 40px 30px; /* 위 오른 아래 왼 */
+  white-space: nowrap;           /* ✅ 줄바꿈 방지 */
   box-sizing: border-box;
 }
 
+#compareStatCheckboxes {
+  margin-bottom: 10px; /* 이 값을 늘리면 아래 결과 카드와의 간격이 생깁니다 */
+}    
+
 #compareStatCheckboxes .row {
   display: flex;
-  flex-wrap: nowrap;              /* ✅ 줄바꿈 방지 */
-  gap: 10px 20px;                /* ✅ 지표 간 여백 명확하게 확보 */
-  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 16px;                      /* ✅ 가로 간격 균일화 */
 }
+    
 #compareStatCheckboxes .row label {
   display: inline-flex;
   align-items: center;
@@ -1048,6 +1109,9 @@ canvas {
 #compareStatCheckboxes input[type="checkbox"] {
   width: 12px;                 /* ✅ 체크박스 크기 축소 */
   height: 12px;
+}
+#compareStatResults {
+  margin-top: 40px; /* 필요 시 이쪽도 조절 가능 */
 }
     
 </style>
