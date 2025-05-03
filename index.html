@@ -237,7 +237,8 @@ thead th {
 }
 
 .card.team-stats {
-  min-height: 350px !important; /* 기존 380px → 줄임 */
+  min-height: unset !important;
+  height: auto !important;
 }
 
 .card.team-stats h3 {
@@ -2621,16 +2622,16 @@ jsonData.forEach(cols => {
   cols["Team"] = (cols["Team"] || "").trim();
 });
 
-      // ✅ 데이터 갱신 필수
-      fullSeasonDataMap[season] = jsonData;
+// ✅ 여기 이 줄만 추가하시면 됩니다
+originalData = jsonData;
 
-      // ✅ 디버깅 로그 추가
-      console.log("24-25 originalData loaded:", originalData);
+// ✅ 데이터 갱신 필수
+fullSeasonDataMap[season] = jsonData;
 
       setTimeout(() => {
         const currentInput = document.getElementById('searchPlayer').value.trim();
         if (currentInput !== "") showPlayerStats();
-        }, 200);
+      }, 200);
     })
     .catch(error => {
       console.error("선수 개인 데이터 로딩 오류:", error);
