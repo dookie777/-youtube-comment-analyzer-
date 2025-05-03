@@ -1290,7 +1290,7 @@ canvas {
 
 <div id="tab-player" class="tab-content">
   <div class="input-box">
-    <select id="seasonSelectorPlayer" onchange="loadPlayersData2()">
+      <select id="seasonSelectorPlayer">
       <option value="22-23">22-23 시즌</option> <!-- ✅ 추가 -->
       <option value="23-24">23-24 시즌</option>
       <option value="24-25" selected>24-25 시즌</option> <!-- 이 줄도 수정 -->
@@ -1858,7 +1858,7 @@ function calculateRank(data, statKey, playerValue, isHigherBetter = true) {
 }
 
 function showPlayerStats() {
-const season = seasonSelector ? seasonSelector.value : '24-25'; // ← '23-24' → '24-25'
+const season = document.getElementById('seasonSelectorPlayer')?.value || '24-25';
 const playerNameInput = document.getElementById('searchPlayer').value.trim();
 const minGamesChecked = document.getElementById('minGames').checked;
 
@@ -2228,16 +2228,25 @@ const filtered = seasonData.filter(row => {
     });
 
     tableHTML += `<tr data-category="${getCategoryByStat(stat.label)}"><td>${stat.label}</td>`;
-
+    
     values.forEach((value, idx) => {
       tableHTML += `<td class="${highlightClass[idx]}">${formatStatValue(stat.key, value)} (${ranks[idx]}위)</td>`;
     });
-
+    
     if (players.length === 2) {
-      const diff = values[0] - values[1];
+      const format = statsFormats[stat.key] || { unit: '', decimals: 2 };  // ✅ 이 줄 추가 필수
+    
+      let v0 = values[0];
+      let v1 = values[1];
+      const isPercentUnit = format.unit === '%' && !['ORB%', 'DRB%', 'TRB%', 'AST%', 'STL%', 'BS%', 'TOV%'].includes(stat.key);
+      if (isPercentUnit) {
+        v0 *= 100;
+        v1 *= 100;
+      }
+    
+      const diff = v0 - v1;
       const diffClass = diff > 0 ? 'diff-positive' : diff < 0 ? 'diff-negative' : '';
-      const format = statsFormats[stat.key] || { unit: '', decimals: 2 };
-
+    
       let formattedDiff;
       if (stat.key === "총 출전 시간(초)" || format.unit === '분 초') {
         const diffSeconds = Math.abs(diff);
@@ -2249,9 +2258,10 @@ const filtered = seasonData.filter(row => {
       } else {
         formattedDiff = `${Math.abs(diff).toFixed(format.decimals)}${format.unit}`;
       }
-
+    
       tableHTML += `<td class="diff-cell ${diffClass}"><span>${formattedDiff}</span></td>`;
     }
+
 
     tableHTML += `</tr>`;
   });
@@ -2706,6 +2716,12 @@ if (savedTypesComparePlayer) {
     });
   });
 })();
+const seasonSelectorPlayer = document.getElementById('seasonSelectorPlayer');
+if (seasonSelectorPlayer) {
+  seasonSelectorPlayer.addEventListener('change', () => {
+    loadPlayersData2();  // 2페이지 선수 데이터 재로딩
+  });
+}
 document.addEventListener('DOMContentLoaded', () => {
   const checkboxes = document.querySelectorAll('#compareStatCheckboxes input[type="checkbox"]');
 
