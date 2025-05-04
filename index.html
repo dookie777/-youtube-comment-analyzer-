@@ -1191,11 +1191,14 @@ canvas {
 
   <div class="input-box">
   <select id="seasonSelector" onchange="loadPlayersData()">
+  <option value="20-21">20-21 시즌</option> <!-- ✅ 추가 -->
+  <option value="21-22">21-22 시즌</option> <!-- ✅ 추가 -->
   <option value="22-23">22-23 시즌</option> <!-- ✅ 추가 -->
   <option value="23-24">23-24 시즌</option>
   <option value="24-25" selected>24-25 시즌</option> <!-- 이 줄만 수정 -->
   </select>
-    <input type="text" id="searchPlayerAll" placeholder="Search player...">
+    <input type="text" id="searchPlayerAll" list="playerSuggestions" placeholder="Search player...">
+    <datalist id="playerSuggestions"></datalist>
     <button onclick="searchPlayer()">Search</button>
     <input type="checkbox" id="minGamesCheckbox">
     <label for="minGamesCheckbox">규정 경기 이상(14G)</label>
@@ -1291,11 +1294,14 @@ canvas {
 <div id="tab-player" class="tab-content">
   <div class="input-box">
       <select id="seasonSelectorPlayer">
+      <option value="20-21">20-21 시즌</option> <!-- ✅ 추가 -->
+      <option value="21-22">21-22 시즌</option> <!-- ✅ 추가 -->
       <option value="22-23">22-23 시즌</option> <!-- ✅ 추가 -->
       <option value="23-24">23-24 시즌</option>
       <option value="24-25" selected>24-25 시즌</option> <!-- 이 줄도 수정 -->
     </select>
-    <input type="text" id="searchPlayer" placeholder="Search player...">
+    <input type="text" id="searchPlayer" list="playerSuggestionsPlayer" placeholder="Search player...">
+    <datalist id="playerSuggestionsPlayer"></datalist>
     <button id="searchPlayerButton">Search</button>
     <input type="checkbox" id="minGames">
     <label for="minGames">규정 경기 이상(14G)</label>
@@ -1321,9 +1327,12 @@ canvas {
 <!-- ✅ 3페이지 복구 시작 -->
 <div id="tab-compare" class="tab-content">
   <div class="input-box">
-    <input type="text" id="comparePlayer1" placeholder="Player 1">
-    <input type="text" id="comparePlayer2" placeholder="Player 2">
-    <input type="text" id="comparePlayer3" placeholder="Player 3(선택)">
+    <input type="text" id="comparePlayer1" list="playerSuggestionsCompare1" placeholder="Player 1">
+    <datalist id="playerSuggestionsCompare1"></datalist>
+    <input type="text" id="comparePlayer2" list="playerSuggestionsCompare2" placeholder="Player 2">
+    <datalist id="playerSuggestionsCompare2"></datalist>
+    <input type="text" id="comparePlayer3" list="playerSuggestionsCompare3" placeholder="Player 3(선택)">
+    <datalist id="playerSuggestionsCompare3"></datalist>
     <button onclick="comparePlayers()">Compare</button>
     <input type="checkbox" id="compareMinGames">
     <label for="compareMinGames">규정 경기 이상(14G)</label>
@@ -1352,7 +1361,8 @@ canvas {
 <!-- ✅ 개인 비교 검색 탭 추가 -->
 <div id="tab-player-compare" class="tab-content">
   <div class="input-box">
-    <input type="text" id="compareSearchPlayer" placeholder="선수 이름 입력">
+    <input type="text" id="compareSearchPlayer" list="playerSuggestionsCompareSingle" placeholder="선수 이름 입력">
+    <datalist id="playerSuggestionsCompareSingle"></datalist>
     <button id="compareSearchButton">검색</button>
     <input type="checkbox" id="compareMinGamesSingle">
     <label for="compareMinGamesSingle">규정 경기 이상(14G)</label>
@@ -1657,6 +1667,8 @@ window.renderTable = renderTable; // ✅ 여기에 이 줄 추가
 async function loadPlayersData() {
   const season = document.getElementById('seasonSelector')?.value || '24-25'; // ← 이 부분도 수정
   const fileMap = {
+    '20-21': '20-21_KBL_stats.xlsx', // ✅ 추가
+    '21-22': '21-22_KBL_stats.xlsx', // ✅ 이 줄 추가
     '22-23': '22-23_KBL_stats.xlsx', // ✅ 추가
     '23-24': '23-24_KBL_stats.xlsx',
     '24-25': '24-25_KBL_stats.xlsx'
@@ -1687,9 +1699,34 @@ originalData.forEach(cols => {
 fullSeasonDataMap[season] = originalData;  // ✅ 꼭 추가하세요
 
 renderTable(originalData);
-
-  
-  
+const playerList = [...new Set(originalData.map(player => player["Player"]).filter(name => name && typeof name === 'string'))];
+const datalist = document.getElementById('playerSuggestions');
+datalist.innerHTML = "";
+playerList.forEach(name => {
+  const option = document.createElement('option');
+  option.value = name;
+  datalist.appendChild(option);
+});
+["playerSuggestionsCompare1", "playerSuggestionsCompare2", "playerSuggestionsCompare3"].forEach(id => {
+  const datalist = document.getElementById(id);
+  if (datalist) {
+    datalist.innerHTML = "";
+    playerList.forEach(name => {
+      const option = document.createElement('option');
+      option.value = name;
+      datalist.appendChild(option);
+    });
+  }
+});  
+const datalistSingle = document.getElementById('playerSuggestionsCompareSingle');
+if (datalistSingle) {
+  datalistSingle.innerHTML = "";
+  playerList.forEach(name => {
+    const option = document.createElement('option');
+    option.value = name;
+    datalistSingle.appendChild(option);
+  });
+}  
 } catch (error) {
   console.error("데이터 로딩 오류:", error);
   alert(`데이터 로딩 실패: ${error.message}`);
@@ -2170,6 +2207,8 @@ function comparePlayersFromCache() {
       <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
         <span style="font-weight: bold; color: #FFF;">${p["Player"]} (${p["Team"]})</span>
         <select id="seasonSwitch-${idx}" class="season-switch">
+          <option value="20-21" ${selectedSeason === '20-21' ? 'selected' : ''}>20-21</option> <!-- ✅ 추가 -->
+          <option value="21-22" ${selectedSeason === '21-22' ? 'selected' : ''}>21-22</option> <!-- ✅ 추가 -->
           <option value="22-23" ${selectedSeason === '22-23' ? 'selected' : ''}>22-23</option>
           <option value="23-24" ${selectedSeason === '23-24' ? 'selected' : ''}>23-24</option>
           <option value="24-25" ${selectedSeason === '24-25' ? 'selected' : ''}>24-25</option>
@@ -2329,6 +2368,8 @@ setTimeout(() => {
 // ✅ 여기부터 새로 붙여넣기
 window.changeSeason = function(playerIndex, season) {
   const fileMap = {
+    '20-21': '20-21_KBL_stats.xlsx', // ✅ 추가
+    '21-22': '21-22_KBL_stats.xlsx', // ✅ 이 줄 추가
     '22-23': '22-23_KBL_stats.xlsx', // ✅ 추가
     '23-24': '23-24_KBL_stats.xlsx',
     '24-25': '24-25_KBL_stats.xlsx'
@@ -2608,6 +2649,8 @@ document.querySelectorAll('#statsTable thead th').forEach((header, index) => {
 function loadPlayersData2() {
   const season = document.getElementById('seasonSelectorPlayer')?.value || '23-24';
   const fileMap = {
+    '20-21': '20-21_KBL_stats.xlsx', // ✅ 추가
+    '21-22': '21-22_KBL_stats.xlsx', // ✅ 이 줄 추가
     '22-23': '22-23_KBL_stats.xlsx', // ✅ 추가
     '23-24': '23-24_KBL_stats.xlsx',
     '24-25': '24-25_KBL_stats.xlsx'
@@ -2634,7 +2677,14 @@ jsonData.forEach(cols => {
 
 // ✅ 여기 이 줄만 추가하시면 됩니다
 originalData = jsonData;
-
+const playerList = [...new Set(jsonData.map(player => player["Player"]).filter(name => name && typeof name === 'string'))];
+const datalist = document.getElementById('playerSuggestionsPlayer');
+datalist.innerHTML = "";
+playerList.forEach(name => {
+  const option = document.createElement('option');
+  option.value = name;
+  datalist.appendChild(option);
+});
 // ✅ 데이터 갱신 필수
 fullSeasonDataMap[season] = jsonData;
 
@@ -2654,7 +2704,13 @@ document.addEventListener("DOMContentLoaded", function () {
   loadPlayersData();
   loadPlayersData2();
   document.getElementById('compareResult').innerHTML = '';
+  
+  // ✅ 1페이지 검색 버튼 클릭 연결
+  document.getElementById('searchPlayerAll').addEventListener('click', searchPlayer);
 
+  // ✅ 2페이지 검색 버튼 클릭 연결
+  document.getElementById('searchPlayerButton').addEventListener('click', showPlayerStats);
+  
   document.getElementById('compareMinGamesSingle').addEventListener('change', () => {
   document.getElementById('compareSearchButton').click();
 });
