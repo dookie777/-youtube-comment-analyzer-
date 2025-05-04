@@ -1197,7 +1197,7 @@ canvas {
   <option value="23-24">23-24 시즌</option>
   <option value="24-25" selected>24-25 시즌</option> <!-- 이 줄만 수정 -->
   </select>
-    <input type="text" id="searchPlayerAll" list="playerSuggestions" placeholder="Search player...">
+    <input type="text" id="searchPlayerAll" list="playerSuggestions" placeholder="Search player..." autocomplete="off">
     <datalist id="playerSuggestions"></datalist>
     <button id="searchPlayerAllButton">Search</button>
     <input type="checkbox" id="minGamesCheckbox">
@@ -1662,77 +1662,6 @@ tabs.forEach(tab => {
     {label: 'BS%', key: "BS%", higherBetter: true},
     {label: 'TOV%', key: "TOV%", higherBetter: false}
   ];  
-window.renderTable = renderTable; // ✅ 여기에 이 줄 추가
-  
-async function loadPlayersData() {
-  const season = document.getElementById('seasonSelector')?.value || '24-25'; // ← 이 부분도 수정
-  const fileMap = {
-    '20-21': '20-21_KBL_stats.xlsx', // ✅ 추가
-    '21-22': '21-22_KBL_stats.xlsx', // ✅ 이 줄 추가
-    '22-23': '22-23_KBL_stats.xlsx', // ✅ 추가
-    '23-24': '23-24_KBL_stats.xlsx',
-    '24-25': '24-25_KBL_stats.xlsx'
-  };
-  const url = `https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`;
-
-try {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-  }
-
-  const data = await response.arrayBuffer();
-  const workbook = XLSX.read(data, { type: "array" });
-  const firstSheet = workbook.SheetNames[0];
-  originalData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
-
-originalData.forEach(cols => {
-  let minutes = parseInt(cols["m"]) || 0;
-  let seconds = parseInt(cols["s"]) || 0;
-  cols["총 출전 시간(초)"] = minutes * 60 + seconds;
-
-  // ✅ 이름, 팀명, 구분 공백 제거
-  cols["Player"] = (cols["Player"] || "").trim();
-  cols["Team"] = (cols["Team"] || "").trim();
-  cols["구분"] = (cols["구분"] || "").trim(); // ← 이거만 해주시면 됩니다
-});
-fullSeasonDataMap[season] = originalData;  // ✅ 꼭 추가하세요
-
-renderTable(originalData);
-const playerList = [...new Set(originalData.map(player => player["Player"]).filter(name => name && typeof name === 'string'))];
-const datalist = document.getElementById('playerSuggestions');
-datalist.innerHTML = "";
-playerList.forEach(name => {
-  const option = document.createElement('option');
-  option.value = name;
-  datalist.appendChild(option);
-});
-["playerSuggestionsCompare1", "playerSuggestionsCompare2", "playerSuggestionsCompare3"].forEach(id => {
-  const datalist = document.getElementById(id);
-  if (datalist) {
-    datalist.innerHTML = "";
-    playerList.forEach(name => {
-      const option = document.createElement('option');
-      option.value = name;
-      datalist.appendChild(option);
-    });
-  }
-});  
-const datalistSingle = document.getElementById('playerSuggestionsCompareSingle');
-if (datalistSingle) {
-  datalistSingle.innerHTML = "";
-  playerList.forEach(name => {
-    const option = document.createElement('option');
-    option.value = name;
-    datalistSingle.appendChild(option);
-  });
-}  
-} catch (error) {
-  console.error("데이터 로딩 오류:", error);
-  alert(`데이터 로딩 실패: ${error.message}`);
-}
-
-
 function renderTable(data) {
   const tableBody = document.getElementById('tableBody');
   tableBody.innerHTML = '';
@@ -1752,7 +1681,7 @@ function renderTable(data) {
 
 const row = document.createElement('tr');
 row.innerHTML = `
-  <td>${playerName} <span class="${cols["출전 경기 수"] >= 20 ? 'valid' : 'warning'}">${status}</span></td>
+  <td>${playerName} (${cols["Team"]}) <span class="${cols["출전 경기 수"] >= 20 ? 'valid' : 'warning'}">${status}</span></td>
   <td>${cols["Team"]}</td>
   <td>${formatStatValue("출전 경기 수", cols["출전 경기 수"])}</td>
   <td data-time="${totalSeconds}">${formatStatValue("총 출전 시간(초)", totalSeconds)}</td>
@@ -1824,28 +1753,127 @@ spacerRow.id = 'spacerRow';
 spacerRow.innerHTML = `<td style="padding: 0; height: 80px; background: transparent; border: none;" colspan="${document.querySelectorAll('#statsTable thead th').length}"></td>`;
 tableBody.appendChild(spacerRow);
 }
+  
+  window.renderTable = renderTable; // ✅ 여기에 이 줄 추가
+  
+async function loadPlayersData() {
+  const season = document.getElementById('seasonSelector')?.value || '24-25'; // ← 이 부분도 수정
+  const fileMap = {
+    '20-21': '20-21_KBL_stats.xlsx', // ✅ 추가
+    '21-22': '21-22_KBL_stats.xlsx', // ✅ 이 줄 추가
+    '22-23': '22-23_KBL_stats.xlsx', // ✅ 추가
+    '23-24': '23-24_KBL_stats.xlsx',
+    '24-25': '24-25_KBL_stats.xlsx'
+  };
+  const url = `https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`;
+
+try {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+  }
+
+  const data = await response.arrayBuffer();
+  const workbook = XLSX.read(data, { type: "array" });
+  const firstSheet = workbook.SheetNames[0];
+  originalData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+
+originalData.forEach(cols => {
+  let minutes = parseInt(cols["m"]) || 0;
+  let seconds = parseInt(cols["s"]) || 0;
+  cols["총 출전 시간(초)"] = minutes * 60 + seconds;
+
+  // ✅ 이름, 팀명, 구분 공백 제거
+  cols["Player"] = (cols["Player"] || "").trim();
+  cols["Team"] = (cols["Team"] || "").trim();
+  cols["구분"] = (cols["구분"] || "").trim(); // ← 이거만 해주시면 됩니다
+});
+fullSeasonDataMap[season] = originalData;  // ✅ 꼭 추가하세요
+
+renderTable(originalData);
+const playerList = [...new Set(originalData
+  .filter(player => player["Player"] && player["Team"])
+  .map(player => `${player["Player"]} (${player["Team"]})`))];
+
+const datalist = document.getElementById('playerSuggestions');
+datalist.innerHTML = "";
+playerList.forEach(fullName => {
+  const option = document.createElement('option');
+  option.value = fullName;
+  datalist.appendChild(option);
+});
+["playerSuggestionsCompare1", "playerSuggestionsCompare2", "playerSuggestionsCompare3"].forEach(id => {
+  const datalist = document.getElementById(id);
+  if (datalist) {
+    datalist.innerHTML = "";
+    playerList.forEach(fullName => {
+      const option = document.createElement('option');
+      option.value = fullName;
+      datalist.appendChild(option);
+    });
+  }
+});
+const datalistSingle = document.getElementById('playerSuggestionsCompareSingle');
+if (datalistSingle) {
+  datalistSingle.innerHTML = "";
+  playerList.forEach(fullName => {
+    const option = document.createElement('option');
+    option.value = fullName;
+    datalistSingle.appendChild(option);
+  });
+}
+} catch (error) {
+  console.error("데이터 로딩 오류:", error);
+  alert(`데이터 로딩 실패: ${error.message}`);
+}
+window.loadPlayersData = loadPlayersData;
+
+
+
 
 window.renderTable = renderTable; // ✅ 여기 있어야만 작동함
 
  
-function searchPlayer(){
-  const query = document.getElementById('searchPlayerAll').value.toLowerCase().trim();
+function searchPlayer() {
+  const rawInput = document.getElementById('searchPlayerAll').value.trim().toLowerCase();
+
+  // ✅ 입력값에서 괄호가 있다면 뒤에 이상한 글자 붙은 것도 제거
+  const fullInput = rawInput.includes(')')
+    ? rawInput.substring(0, rawInput.indexOf(')') + 1)
+    : rawInput;
+
   clearFixedRow();
   const rows = document.querySelectorAll('#tableBody tr');
   let found = false;
+
   rows.forEach(row => {
-    const name = row.cells[0].textContent.toLowerCase();
+    let cellText = row.cells[0].textContent || "";
+    cellText = cellText
+      .replace('해제', '')
+      .replace('✅', '')
+      .replace('⚠️', '')
+      .replace(/[\u200B-\u200D\uFEFF]/g, '')       // 보이지 않는 문자 제거
+      .replace(/[^\w\s()가-힣]/g, '')              // 한글, 괄호 외 특수문자 제거
+      .replace(/\s+/g, ' ')                        // 연속된 공백 정리
+      .replace(/ +$/, '')                          // 끝 공백 제거
+      .trim()
+      .toLowerCase();
+
     row.classList.remove('highlight');
-    if (name.includes(query)){
-      found = true;
+    if (cellText === fullInput) {
       row.classList.add('highlight');
       fixRow(row);
+      found = true;
     }
   });
+
   if (!found) alert("Player not found!");
 }
+
+
+window.searchPlayer = searchPlayer;
  
- function fixRow(row) {
+function fixRow(row) {
   clearFixedRow();
   fixedRow = row.cloneNode(true);
   fixedRow.classList.add('fixed-row', 'highlight');
@@ -1853,6 +1881,13 @@ function searchPlayer(){
   fixedRow.style.top = '34px';
   fixedRow.style.backgroundColor = '#000';
   fixedRow.style.zIndex = '500';
+
+  // ✅ 원래 텍스트만 추출 (span 제거된 순수 텍스트)
+  const cleanText = row.cells[0].innerText
+    .replace('✅', '')
+    .replace('⚠️', '')
+    .replace('해제', '')
+    .trim();
 
   const releaseBtn = document.createElement('button');
   releaseBtn.textContent = '해제';
@@ -1862,9 +1897,12 @@ function searchPlayer(){
     document.getElementById('searchPlayerAll').value = "";
   };
 
-  fixedRow.cells[0].appendChild(releaseBtn);
+  fixedRow.cells[0].innerText = cleanText;  // 텍스트만 다시 삽입
+  fixedRow.cells[0].appendChild(releaseBtn);  // 버튼 따로 추가
+
   document.querySelector('#statsTable thead').after(fixedRow);
 }
+
 
 function clearFixedRow() {
   if (fixedRow) {
@@ -1906,9 +1944,11 @@ const filteredData = data.filter(cols => {
   return isTypeMatched && isMinGames;
 });
   
-  const playerData = filteredData.find(cols => 
-    cols["Player"].trim().toLowerCase().includes(playerNameInput.toLowerCase())
-  );
+const nameOnly = playerNameInput.split(' (')[0];  // ← 이 줄 추가
+
+const playerData = filteredData.find(cols => 
+  cols["Player"].trim().toLowerCase() === nameOnly.toLowerCase()  // ← 이 줄 수정
+);
 
   if (playerData) {
     document.getElementById('playerTitle').innerText = `${playerData["Player"]} (${playerData["Team"]})`;
@@ -2095,6 +2135,8 @@ statsContainer.appendChild(spacer);
     alert('선수를 찾을 수 없습니다.');
   }
 }
+window.showPlayerStats = showPlayerStats;
+
  document.getElementById('searchPlayerAll').addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     searchPlayer();
@@ -2676,7 +2718,9 @@ jsonData.forEach(cols => {
 
 // ✅ 여기 이 줄만 추가하시면 됩니다
 originalData = jsonData;
-const playerList = [...new Set(jsonData.map(player => player["Player"]).filter(name => name && typeof name === 'string'))];
+const playerList = [...new Set(jsonData
+  .filter(player => player["Player"] && player["Team"])
+  .map(player => `${player["Player"]} (${player["Team"]})`))];  // ✅ 이 줄로 변경
 const datalist = document.getElementById('playerSuggestionsPlayer');
 datalist.innerHTML = "";
 playerList.forEach(name => {
@@ -3058,7 +3102,9 @@ scales: {
     });
   });
 });
-  
+
+document.getElementById('searchPlayerAllButton').addEventListener('click', searchPlayer);
+document.getElementById('searchPlayerButton').addEventListener('click', showPlayerStats);
 </script>
 
  </body>
