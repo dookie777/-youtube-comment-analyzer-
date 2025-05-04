@@ -1829,8 +1829,6 @@ if (datalistSingle) {
 window.loadPlayersData = loadPlayersData;
 
 
-
-
 window.renderTable = renderTable; // ✅ 여기 있어야만 작동함
 
  
@@ -1944,10 +1942,10 @@ const filteredData = data.filter(cols => {
   return isTypeMatched && isMinGames;
 });
   
-const nameOnly = playerNameInput.split(' (')[0];  // ← 이 줄 추가
+const fullInput = playerNameInput.trim().toLowerCase();
 
-const playerData = filteredData.find(cols => 
-  cols["Player"].trim().toLowerCase() === nameOnly.toLowerCase()  // ← 이 줄 수정
+const playerData = filteredData.find(cols =>
+  `${cols["Player"].trim()} (${cols["Team"].trim()})`.toLowerCase() === fullInput
 );
 
   if (playerData) {
@@ -2203,21 +2201,28 @@ if (!player1 && !player2 && !player3) {
 
 playersData = [player1, player2, player3]
   .filter(name => name !== '')
-  .map((name, idx) => {
-    const seasonSelector = document.getElementById(`seasonSwitch-${idx}`);
-    const season = seasonSelector ? seasonSelector.value : '24-25'; // ✅ 실제 선택된 시즌 기반
+.map((name, idx) => {
+  const seasons = ['24-25', '23-24', '22-23', '21-22', '20-21'];
+  let matched = null;
+  let selectedSeason = '24-25';
 
+  for (const season of seasons) {
     const seasonData = fullSeasonDataMap[season] || [];
-    const matched = seasonData.find(cols =>
-      cols["Player"].trim().toLowerCase() === name.toLowerCase()
+    matched = seasonData.find(cols =>
+      `${cols["Player"].trim()} (${cols["Team"].trim()})`.toLowerCase() === name.toLowerCase()
     );
-
     if (matched) {
-      matched.__season = season;
-      return matched;
+      selectedSeason = season;
+      break;
     }
-    return undefined;
-  });
+  }
+
+  if (matched) {
+    matched.__season = selectedSeason;
+    return matched;
+  }
+  return undefined;
+});
 
 
   if (playersData.some(p => p === undefined)) {
@@ -2232,6 +2237,22 @@ playersData = [player1, player2, player3]
 
   comparePlayersFromCache();
 };
+function findLatestSeasonPlayer(name) {
+  const seasons = ['24-25', '23-24', '22-23', '21-22', '20-21'];
+  for (const season of seasons) {
+    const data = fullSeasonDataMap[season];
+    if (!data) continue;
+
+    const found = data.find(row =>
+      `${row["Player"].trim()} (${row["Team"].trim()})`.toLowerCase() === name.toLowerCase()
+    );
+    if (found) {
+      found.__season = season;
+      return found;
+    }
+  }
+  return null;
+}
 
 
 function comparePlayersFromCache() {
@@ -2436,8 +2457,9 @@ window.changeSeason = function(playerIndex, season) {
       if (!input) return;
 
       const name = input.value.trim().toLowerCase();
-      const matchedPlayer = seasonData.find(p => p["Player"]?.trim().toLowerCase() === name);
-
+      const matchedPlayer = seasonData.find(p =>
+        `${p["Player"]?.trim()} (${p["Team"]?.trim()})`.toLowerCase() === name
+      );
       if (!matchedPlayer) {
         alert("선수를 찾을 수 없습니다.");
         return;
@@ -2741,11 +2763,71 @@ fullSeasonDataMap[season] = jsonData;
       alert("데이터를 불러오는 중 문제가 발생했습니다.");
     });
 }
+async function loadPlayersData2() {
+  // ...
+}  // ← 이거 끝나는 바로 아래에
+
+// ✅ 여기에 붙여넣기
+async function loadAllPlayerSuggestions() {
+  const allSeasons = ['20-21', '21-22', '22-23', '23-24', '24-25'];
+  const fileMap = {
+    '20-21': '20-21_KBL_stats.xlsx',
+    '21-22': '21-22_KBL_stats.xlsx',
+    '22-23': '22-23_KBL_stats.xlsx',
+    '23-24': '23-24_KBL_stats.xlsx',
+    '24-25': '24-25_KBL_stats.xlsx'
+  };
+
+  const mergedPlayerList = new Set();
+
+  for (const season of allSeasons) {
+    try {
+      const res = await fetch(`https://raw.githubusercontent.com/dookie777/KBL-Player-Performance-Analyzer/main/${fileMap[season]}`);
+      const data = await res.arrayBuffer();
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      jsonData.forEach(player => {
+        const name = (player["Player"] || "").trim();
+        const team = (player["Team"] || "").trim();
+        if (name && team) {
+          mergedPlayerList.add(`${name} (${team})`);
+        }
+      });
+    } catch (err) {
+      console.warn(`⚠️ ${season} 자동완성 실패`, err);
+    }
+  }
+
+  // datalist에 삽입
+  const datalistIds = [
+    'playerSuggestions',
+    'playerSuggestionsPlayer',
+    'playerSuggestionsCompare1',
+    'playerSuggestionsCompare2',
+    'playerSuggestionsCompare3',
+    'playerSuggestionsCompareSingle'
+  ];
+
+  datalistIds.forEach(id => {
+    const datalist = document.getElementById(id);
+    if (datalist) {
+      datalist.innerHTML = '';
+      mergedPlayerList.forEach(fullName => {
+        const option = document.createElement('option');
+        option.value = fullName;
+        datalist.appendChild(option);
+      });
+    }
+  });
+}
 
 
 document.addEventListener("DOMContentLoaded", function () {
   loadPlayersData();
   loadPlayersData2();
+  loadAllPlayerSuggestions();  // ✅ 자동완성 전체 시즌 기반 적용!
   document.getElementById('compareResult').innerHTML = '';
   
   // ✅ 1페이지 검색 버튼 클릭 연결
@@ -2893,8 +2975,10 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 document.getElementById('compareSearchButton').addEventListener('click', async () => {
-  const playerName = document.getElementById('compareSearchPlayer').value.trim();
-  const selectedMetrics = Array.from(document.querySelectorAll('#compareStatCheckboxes input[type="checkbox"]:checked'))
+const fullInput = document.getElementById('compareSearchPlayer').value.trim().toLowerCase();
+const playerName = fullInput.includes(')')
+  ? fullInput.substring(0, fullInput.indexOf(')') + 1)
+  : fullInput;  const selectedMetrics = Array.from(document.querySelectorAll('#compareStatCheckboxes input[type="checkbox"]:checked'))
                                .map(cb => cb.value);
 
   if (!playerName || selectedMetrics.length === 0) {
